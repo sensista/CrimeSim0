@@ -3,7 +3,7 @@
 > Diese Datei ist die gemeinsame Anweisungsquelle für Cursor und Grok Bot. Aufgaben und Entscheidungen hier festhalten und aktuell halten.
 
 ## Offene Entscheidungen
-- [ ] Kamera: Third oder First Person
+- [ ] Finale Standard-Perspektive (Third oder First Person; Umschaltung bleibt dauerhaft drin)
 - [ ] Setting und Stadt
 - [ ] Grafikstil
 - [ ] Umfang des ersten Prototyps
@@ -13,7 +13,8 @@
 - [ ] Projekt in Unity 6000.3.25f1 öffnen, generierte Dateien committen
 
 ## Phase 1: Vertical Slice (Prototyp)
-- [ ] Bewegung und Kamera (PlayerController, Kamera-Rig)
+- [x] Umschaltbare Kamera Third/First Person (CameraController, Taste V)
+- [ ] Bewegung und Kamera in Unity testen und feinjustieren
 - [ ] Kleine Stadtzone als Blockout (ein paar Straßen, Gebäude, Wohnung)
 - [ ] Interaktionssystem (Objekte und NPCs ansprechen oder benutzen)
 - [ ] Inventar (Gegenstände aufnehmen, lagern, abgeben)

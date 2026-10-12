@@ -10,17 +10,38 @@ namespace CrimeSim
     {
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField] private float gravity = -9.81f;
+        [SerializeField] private float turnSpeed = 720f; // Grad pro Sekunde
+        [SerializeField] private CameraController cameraController;
 
         private CharacterController controller;
         private float verticalVelocity;
 
-        private void Awake() => controller = GetComponent<CharacterController>();
+        private void Awake()
+        {
+            controller = GetComponent<CharacterController>();
+            if (cameraController == null) cameraController = FindFirstObjectByType<CameraController>();
+        }
 
         private void Update()
         {
             Vector2 input = ReadMoveInput();
             Vector3 move = new Vector3(input.x, 0f, input.y);
             if (move.sqrMagnitude > 1f) move.Normalize();
+
+            // Bewegung relativ zur Kamera-Blickrichtung (nur Yaw)
+            bool firstPerson = cameraController != null && cameraController.IsFirstPerson;
+            if (cameraController != null)
+                move = Quaternion.Euler(0f, cameraController.Yaw, 0f) * move;
+
+            if (firstPerson)
+            {
+                transform.rotation = Quaternion.Euler(0f, cameraController.Yaw, 0f);
+            }
+            else if (move.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(move, Vector3.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+            }
 
             if (controller.isGrounded && verticalVelocity < 0f) verticalVelocity = -2f;
             verticalVelocity += gravity * Time.deltaTime;
