@@ -24,6 +24,15 @@ docs/ROADMAP.md   Aufgaben & Meilensteine
 4. Optional bei Player im Feld `Camera Controller` die Kamera eintragen, sonst wird sie automatisch gesucht.
 5. Steuerung: WASD bewegen, Maus umsehen, **V** schaltet zwischen Third und First Person.
 
+## Testlevel erstellen
+Im Unity-Menü **CrimeSim → Testlevel erstellen** wählen. Das Skript:
+- legt bei Bedarf den Layer `PlayerBody` an,
+- erstellt Materialien unter `Assets/_Project/Art/Materials` (URP/Lit, sonst Standard),
+- baut eine Szene mit Licht, Boden, Gebäudeblöcken, Rampe, Treppe, Kisten, Player (inkl. HeadAnchor) und fertig verdrahteter Kamera,
+- speichert sie unter `Assets/_Project/Scenes/TestLevel.unity`.
+
+Erneut ausführen überschreibt die Szene. Danach Play drücken: WASD, Maus, **V** zum Umschalten.
+
 ## Spielkonzept
 3D-Open-World-Crime-Sim in Unity 6, eine Mischung aus bekannten Vorbildern plus eigenen, neuen Mechaniken:
 - **GTA:** offene Stadt, Fahrzeuge, Polizei und Fahndungslevel
