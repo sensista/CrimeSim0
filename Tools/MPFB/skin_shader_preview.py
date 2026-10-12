@@ -41,7 +41,7 @@ def light(name,typ,col,en,loc,rot,size=1.0):
     o=bpy.data.objects.new(name,l); sc.collection.objects.link(o); o.location=loc; o.rotation_euler=[math.radians(a) for a in rot]; return o
 def img(n,cs='Non-Color'):
     i=bpy.data.images.load(T+n); i.colorspace_settings.name=cs; return i
-I={k:img(v) for k,v in dict(var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png",brush="skin_brush.png").items()}
+I={k:img(v) for k,v in dict(var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png").items()}
 I["base"]=img("skin_painted_female.png",'sRGB')
 def mat(P,tone):
     m=bpy.data.materials.new(f"skin_{P}_{tone}"); m.use_nodes=True; nt=m.node_tree; N=nt.nodes; L=nt.links; N.clear()
@@ -78,7 +78,7 @@ def mat(P,tone):
     alb=mix(alb,(1.0,0.72,0.68,1),math_('MULTIPLY',v[0],VS),'MULTIPLY')
     alb=mix(alb,(1.0,0.95,0.8,1),math_('MULTIPLY',v[1],VS),'MULTIPLY')
     alb=mix(alb,(0.86,0.83,0.93,1),math_('MULTIPLY',v[2],VS),'MULTIPLY')
-    br=sep(tex("brush",4))[0]
+    br=0.5  # keine Pinsel/Rauschen mehr
     bc=math_('ADD',math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.35*P),1.0)
     alb=mix(alb,(1,0.75+0.25,1,1),0,'MIX')
     alb=mix(alb,bc,1.0,'MULTIPLY') if False else mix(alb,(1,1,1,1),0,'MIX')
@@ -114,7 +114,7 @@ def mat(P,tone):
     # Gegenlicht dünne Stellen (vereinfacht: konstanter warmer Zusatz)
     col=mix(col,mix(alb,(1.0,0.4,0.3,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("thick"))[0],0.15),'ADD')
     # Mitteltöne entsättigen
-    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1-0.45*P*0.6
+    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.25
     col=hsv.outputs[0]
     # Randlicht
     fr_=N.new('ShaderNodeLayerWeight'); fr_.inputs[0].default_value=0.12
@@ -123,23 +123,35 @@ def mat(P,tone):
     # dezentes gemaltes Glanzlicht
     g=N.new('ShaderNodeBsdfGlossy'); g.inputs['Roughness'].default_value=0.45
     ad=N.new('ShaderNodeAddShader'); L.new(e.outputs[0],ad.inputs[0])
-    mxs=N.new('ShaderNodeMixShader'); mxs.inputs[0].default_value=0.04; L.new(e.outputs[0],mxs.inputs[1]); L.new(g.outputs[0],mxs.inputs[2])
-    L.new(mxs.outputs[0],out.inputs[0])
+    g.inputs['Roughness'].default_value=0.4; g.distribution='GGX'
+    fz=N.new('ShaderNodeFresnel'); fz.inputs[0].default_value=1.4
+    gw=math_('ADD',0.35,math_('MULTIPLY',fz.outputs[0],4.0))
+    gs=N.new('ShaderNodeMixShader'); L.new(gw,gs.inputs[0]); gs.inputs[0].default_value=0
+    ad2=N.new('ShaderNodeAddShader'); L.new(e.outputs[0],ad2.inputs[0])
+    gc=N.new('ShaderNodeMath'); gc.operation='MULTIPLY'; L.new(gw,gc.inputs[0]); gc.inputs[1].default_value=0.12
+    g.inputs['Color'].default_value=(1,1,1,1)
+    sc_=N.new('ShaderNodeMixShader'); L.new(gc.outputs[0],sc_.inputs[0]); tr=N.new('ShaderNodeBsdfTransparent'); L.new(tr.outputs[0],sc_.inputs[1]); L.new(g.outputs[0],sc_.inputs[2])
+    # Transparent als 'nichts': Glanz additiv über Add-Shader
+    hold=N.new('ShaderNodeMixShader'); hold.inputs[0].default_value=1.0
+    L.new(e.outputs[0],ad2.inputs[0]); L.new(g.outputs[0],ad2.inputs[1])
+    fin=N.new('ShaderNodeMixShader'); L.new(gc.outputs[0],fin.inputs[0]); L.new(e.outputs[0],fin.inputs[1]); L.new(ad2.outputs[0],fin.inputs[2])
+    L.new(fin.outputs[0],out.inputs[0])
     return m
 cam=bpy.data.objects.new("cam",bpy.data.cameras.new("cam")); sc.collection.objects.link(cam); sc.camera=cam
 cam.data.lens=135
 top=max(v.co.z for v in body.data.vertices)
 light("key",'AREA',(1,0.82,0.62),160,(-0.9,-1.3,top+0.25),(78,0,-35),0.9)
 light("fill",'AREA',(0.6,0.7,1.0),25,(1.2,-0.8,1.6),(70,0,50),1.5)
-light("rim",'AREA',(1,0.8,0.65),60,(0.6,0.9,1.9),(-60,0,150),0.8)
+light("rim",'AREA',(1,0.72,0.5),140,(0.6,0.9,1.9),(-60,0,150),0.8)
 def shoot(path,profile):
-    if profile: cam.location=(-1.45,-0.02,top-0.17); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
+    if profile: cam.location=(-1.25,-0.02,top-0.12); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
     else: cam.location=(0,-1.25,top-0.12); cam.rotation_euler=(math.radians(90),0,0)
     sc.render.filepath=path; bpy.ops.render.render(write_still=True)
 TONES={"vlight":(0.98,0.86,0.78),"medium":(0.8,0.6,0.46),"darkbrown":(0.4,0.25,0.16),"vdark":(0.2,0.12,0.08)}
 MED=(0.87,0.69,0.55)
-jobs=[(0.0,MED,"p0"),(0.35,MED,"p35"),(0.7,MED,"p70"),(1.0,MED,"p100")]+[(0.35,v,k) for k,v in TONES.items()]
-for P,tone,tag in jobs:
+jobs=[(0.0,MED,"base",True)]+[(0.0,v,k,False) for k,v in TONES.items()]
+for P,tone,tag,prof in jobs:
     m=mat(P,tone); body.data.materials.clear(); body.data.materials.append(m)
     shoot(f"{OUT}/{tag}_front.png",False)
+    if prof: shoot(f"{OUT}/{tag}_side.png",True)
 print("PREVIEW DONE")

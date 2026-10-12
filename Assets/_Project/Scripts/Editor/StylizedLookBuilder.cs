@@ -178,7 +178,6 @@ namespace CrimeSim.EditorTools
             }
             Tex("skin_variation.png", "_VariationMap", false);
             Tex("skin_thickness.png", "_ThicknessMap", false);
-            Tex("skin_brush.png", "_BrushMap", true);
             EditorUtility.SetDirty(m);
             return m;
         }
