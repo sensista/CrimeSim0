@@ -7,6 +7,10 @@ sc=bpy.context.scene; sc.render.engine='BLENDER_EEVEE_NEXT'
 sc.view_settings.view_transform='AgX'; sc.view_settings.look='AgX - Base Contrast'
 sc.render.resolution_x=820; sc.render.resolution_y=1000
 sc.eevee.use_shadows=True
+# EEVEE-Next Schattenkarten erzeugen sonst feine "Kratzer" (Selbstschatten-Akne) auf glatten Wangen/Stirn –
+# reines Vorschau-Artefakt, in Unity nicht vorhanden. Weicher filtern und Raymarching-Schritte erhöhen.
+sc.eevee.shadow_ray_count=1; sc.eevee.shadow_step_count=6; sc.eevee.shadow_resolution_scale=1.0
+
 body=bpy.data.objects["Body"]
 for o in bpy.data.objects:
     if o.type=='MESH': o.hide_render = o.name.startswith("Underwear") or o.name=="Teeth"
@@ -91,7 +95,7 @@ def mat(P,tone):
     # Licht: weißes Diffuse -> Shader to RGB -> Helligkeit
     dt=sep(tex("det"))
     cav=math_('MAXIMUM',math_('MULTIPLY',math_('SUBTRACT',0.5,dt[0]),2.0),0.0)
-    alb=mix(alb,mix(alb,(0.62,0.38,0.36,1),1.0,'MULTIPLY'),math_('MULTIPLY',cav,0.6))
+    alb=mix(alb,mix(alb,(0.62,0.38,0.36,1),1.0,'MULTIPLY'),math_('MULTIPLY',cav,0.4))
     alb=mix(alb,mix(alb,(1.08,0.66,0.62,1),1.0,'MULTIPLY'),math_('MULTIPLY',dt[1],0.7))
     brd=math_('MULTIPLY',math_('MULTIPLY',dt[1],math_('SUBTRACT',1.0,dt[1])),4.0)
     alb=mix(alb,mix(alb,(0.82,0.82,0.82,1),1.0,'MULTIPLY'),brd)
@@ -178,11 +182,15 @@ def rig(name):
     elif name=="interior":  # warme Stehlampe + schwaches Fenster
         bg.inputs[0].default_value=(0.015,0.012,0.01,1)
         o=L_("lamp",'POINT',(1.0,0.65,0.35),90,(-0.8,-0.9,top+0.1),(0,0,0)); o.data.shadow_soft_size=0.35  # Lampenschirm: weich, vorne links
+        L_("bounce",'AREA',(1.0,0.72,0.52),25,(0.7,-0.9,top-0.45),(110,0,35),1.2)  # warmer Bounce gegen harte Nasenschatten
         L_("window",'AREA',(0.7,0.8,1.0),30,(-1.5,0.2,top),(90,0,-90),1.5)
 rig("interior")
 def shoot(path,profile):
     if profile: cam.location=(-1.0,-0.02,top-0.17); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
     else: cam.location=(0,-1.0,top-0.17); cam.rotation_euler=(math.radians(90),0,0)
+    for l in bpy.data.lights:
+        for attr,val in (("shadow_filter_radius",1.0),("shadow_maximum_resolution",0.0001),("use_shadow_jitter",False)):
+            if hasattr(l,attr): setattr(l,attr,val)
     sc.render.filepath=path; bpy.ops.render.render(write_still=True)
 TONES={"vlight":(0.98,0.86,0.78),"medium":(0.8,0.6,0.46),"darkbrown":(0.4,0.25,0.16),"vdark":(0.2,0.12,0.08)}
 MED=(0.87,0.69,0.55)

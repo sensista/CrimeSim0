@@ -45,6 +45,9 @@ for pl in low.data.polygons: pl.use_smooth=True
 if hasattr(low.data,"normals_domain") and low.data.has_custom_normals:
     bpy.context.view_layer.objects.active=low; bpy.ops.mesh.customdata_custom_splitnormals_clear()
 dg=bpy.context.evaluated_depsgraph_get()
+_le=low.evaluated_get(dg).to_mesh()
+LIPU=np.array(low.matrix_world@_le.vertices[474].co); LIPL=np.array(low.matrix_world@_le.vertices[523].co)
+low.evaluated_get(dg).to_mesh_clear()
 hi=bpy.data.objects.new("hi",bpy.data.meshes.new_from_object(low.evaluated_get(dg))); sc.collection.objects.link(hi)
 hi.matrix_world=low.matrix_world
 bpy.context.view_layer.objects.active=hi
@@ -73,24 +76,26 @@ d=smooth(np.repeat(d[:,None],3,1),4)[:,0]   # weich
 zt=co[:,2].max(); zone=np.clip((co[:,2]-(zt-0.42))/0.06,0,1)
 # Gezielte anatomische Details (glatt): Gesicht + Hals + Schlüsselbeine (Morph ist schon im Mesh, hier nur Schärfe)
 S=A.Surf(co,nr)
-bd,notch=A.body_offsets(co,nr,CLAV,S,0.5,1.0)
-fd=A.face_offsets(co,nr,S,474,523,EYES,notch,1.4)
+bd,notch=A.body_offsets(co,nr,CLAV,S,1.0,1.0)
+fd=A.face_offsets(co,nr,S,LIPU,LIPL,EYES,notch,1.4)
 print("TARGETED mm",bd.min()*1000,bd.max()*1000,fd.min()*1000,fd.max()*1000)
+FM=A.face_mask(co,nr,LIPU,LIPL,EYES)
+d=d*(1-0.85*FM)  # Gesicht: kaum breite Betonung (glatt, jung)
+dbroad=d.copy()
 d=d*STRENGTH+bd+fd
 hi_co=co+nr*d[:,None]
-d=d/STRENGTH  # für Kavität                    # betonen
+d=dbroad+bd*0.15  # Kavität nur aus breiter Form (+ etwas Schlüsselbein), gezielte Rillen nicht abdunkeln                    # betonen
 me.vertices.foreach_set("co",hi_co.ravel()); me.update()
 # Kavität + Lippenmaske als Vertex-Farbe
 cav=np.clip(0.5+d/0.004*0.5*STRENGTH/1.6,0,1)
-lowco=[v.co.copy() for v in low.data.vertices]
-lu,ll=lowco[474],lowco[523]; mid=(lu+ll)/2
+mid=(LIPU+LIPL)/2
 rel=co-np.array(mid)
 # Ellipse: Breite x ~2.6cm, Höhe z ~1.3cm, nur vorne
 q=(rel[:,0]/0.03)**2+(rel[:,2]/0.017)**2+(np.clip(-rel[:,1]-0.0,0,None)*0+ (np.clip(rel[:,1],0,None)/0.012)**2)
 lip=np.clip(1.0-q,0,1)
 lip=smooth(np.repeat(lip[:,None],3,1),3)[:,0]
 ca=me.color_attributes.new("det",'FLOAT_COLOR','POINT')
-GL,RED,WARM,COOL=A.face_zones(co,nr,474,523,EYES)
+GL,RED,WARM,COOL=A.face_zones(co,nr,LIPU,LIPL,EYES)
 col=np.stack([cav,np.clip(lip*1.6,0,1),GL,np.ones(n)],1)   # B = Glanz-Zonen (Glätte)
 cv=me.color_attributes.new("var",'FLOAT_COLOR','POINT')
 cv.data.foreach_set("color",np.stack([RED,WARM,COOL,np.ones(n)],1).ravel())

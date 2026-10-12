@@ -300,7 +300,7 @@ namespace CrimeSim.EditorTools
             oso.ApplyModifiedPropertiesWithoutUndo();
 
             // Licht-Stimmungen (Tag / Abend / Nacht) inkl. Post-Processing
-            BuildLightRigs(cam, 1);
+            BuildLightRigs(cam, 3);
 
             // Steuerung
             var ctrlGo = new GameObject("LookDev");
@@ -325,7 +325,7 @@ namespace CrimeSim.EditorTools
         /// </summary>
         public static LightingPresets BuildLightRigs(Camera cam, int start)
         {
-            var rootGo = new GameObject("Licht (Tag/Abend/Nacht)");
+            var rootGo = new GameObject("Licht (Tag/Abend/Nacht/Innenraum)");
             var lp = rootGo.AddComponent<LightingPresets>();
             Vector3 face = new Vector3(0f, 1.5f, 0f);
 
@@ -362,9 +362,22 @@ namespace CrimeSim.EditorTools
             MakeLight("Neon magenta", LightType.Point, new Color(0.9f, 0.3f, 0.7f), 0.7f,
                 Quaternion.identity, new Vector3(1.2f, 2.0f, -1.0f), LightShadows.None, null, nacht).range = 3f;
 
+            // Innenraum warm (Standard für Creator/Look-Dev): weiche Stehlampe vorne links, warmer Bounce
+            // von rechts unten gegen harte Nasenschatten, schwaches kühles Fenster, dezentes Rim
+            var innen = Rig(rootGo.transform, "Innenraum", "LookDev_Innenraum", 0.1f, 6f, 0.22f, new Color(1f, 0.97f, 0.92f));
+            var lamp = MakeLight("Stehlampe (Key, vorne links)", LightType.Spot, new Color(1f, 0.72f, 0.45f), 3.0f,
+                Quaternion.identity, new Vector3(-0.9f, 1.75f, 1.0f), LightShadows.Soft, face, innen);
+            lamp.range = 5f; lamp.spotAngle = 80f; lamp.innerSpotAngle = 40f; lamp.shadowNormalBias = 0.3f;
+            MakeLight("Bounce warm (rechts unten)", LightType.Point, new Color(1f, 0.7f, 0.5f), 0.6f,
+                Quaternion.identity, new Vector3(0.8f, 1.1f, 0.9f), LightShadows.None, null, innen).range = 3f;
+            MakeLight("Fenster kühl (links)", LightType.Point, new Color(0.7f, 0.8f, 1f), 0.35f,
+                Quaternion.identity, new Vector3(-1.6f, 1.6f, -0.2f), LightShadows.None, null, innen).range = 3.5f;
+            MakeLight("Rim warm", LightType.Spot, new Color(1f, 0.75f, 0.55f), 0.6f,
+                Quaternion.identity, new Vector3(0.7f, 2.0f, -1.2f), LightShadows.None, face, innen);
+
             var so = new SerializedObject(lp);
             var arr = so.FindProperty("presets");
-            arr.arraySize = 3;
+            arr.arraySize = 4;
             void P(int i, string n, GameObject r, Color sky, Color eq, Color gr, Color bg)
             {
                 var e = arr.GetArrayElementAtIndex(i);
@@ -378,6 +391,7 @@ namespace CrimeSim.EditorTools
             P(0, "Tag", tag.gameObject, new Color(0.42f, 0.45f, 0.52f), new Color(0.32f, 0.3f, 0.3f), new Color(0.12f, 0.1f, 0.09f), new Color(0.2f, 0.21f, 0.24f));
             P(1, "Abend", abend.gameObject, new Color(0.1f, 0.1f, 0.13f), new Color(0.08f, 0.065f, 0.065f), new Color(0.03f, 0.025f, 0.02f), new Color(0.05f, 0.045f, 0.055f));
             P(2, "Nacht", nacht.gameObject, new Color(0.05f, 0.055f, 0.08f), new Color(0.035f, 0.03f, 0.045f), new Color(0.01f, 0.01f, 0.012f), new Color(0.02f, 0.02f, 0.03f));
+            P(3, "Innenraum", innen.gameObject, new Color(0.14f, 0.12f, 0.11f), new Color(0.12f, 0.09f, 0.07f), new Color(0.05f, 0.035f, 0.025f), new Color(0.06f, 0.05f, 0.045f));
             so.FindProperty("startPreset").intValue = start;
             so.FindProperty("targetCamera").objectReferenceValue = cam;
             so.ApplyModifiedPropertiesWithoutUndo();

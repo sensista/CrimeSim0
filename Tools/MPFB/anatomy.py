@@ -6,6 +6,10 @@ import numpy as np
 from mathutils import Vector
 from mathutils.kdtree import KDTree
 
+def _pt(co,x):
+    # Index ins Mesh oder direkt ein Punkt
+    return np.asarray(x,float) if np.ndim(x)>0 else co[int(x)]
+
 class Surf:
     def __init__(self, co, nr):
         self.co=co; self.nr=nr
@@ -74,24 +78,24 @@ def body_offsets(co, nr, lm, S, scale=1.0, wscale=1.0):
 
 def face_offsets(co, nr, S, lip_u, lip_l, eyes, notch, scale=1.0):
     """Philtrum, Nasenflügel, Nasolabialfalte, Lidfalte, Halssehnen (SCM)."""
-    d=np.zeros(len(co)); M=(co[lip_u]+co[lip_l])/2
+    d=np.zeros(len(co)); LU=_pt(co,lip_u); LL=_pt(co,lip_l); M=(LU+LL)/2
     sel=(np.abs(co[:,0])<0.004)&(co[:,2]>M[2]+0.01)&(co[:,2]<M[2]+0.06)
     tip=co[sel][np.argmin(co[sel][:,1])]
     sel2=(np.abs(co[:,0])<0.003)&(co[:,2]>M[2]+0.006)&(co[:,2]<tip[2]-0.006)&(co[:,1]<tip[1]+0.03)
     sn=co[sel2][np.argmax(co[sel2][:,1])] if sel2.any() else tip+np.array([0,0.015,-0.015])
-    top=co[lip_u]+np.array([0,0,0.004])
+    top=LU+np.array([0,0,0.004])
     # Philtrum: Rinne in der Mitte, zwei weiche Säulen
     P,PN=polyline(S,[sn,top],8); d+=line_field(co,nr,P,PN,-0.0007*scale,0.0028)
     for sx in (-1,1):
         P,PN=polyline(S,[sn+np.array([sx*0.004,0,0]),top+np.array([sx*0.0055,0,0])],8); d+=line_field(co,nr,P,PN,0.0005*scale,0.002)
         # Nasenflügel-Falte (Bogen um den Flügel)
         alar=[sn+np.array([sx*0.008,0.003,-0.001]),sn+np.array([sx*0.0165,0.006,0.004]),sn+np.array([sx*0.018,0.004,0.012]),sn+np.array([sx*0.013,-0.002,0.018])]
-        P,PN=polyline(S,alar,6); d+=line_field(co,nr,P,PN,-0.0009*scale,0.0018)
-        # Nasolabial: weiche Linie Nasenflügel -> neben Mundwinkel
-        P,PN=polyline(S,[sn+np.array([sx*0.020,0.004,0.004]),M+np.array([sx*0.027,0.0,0.008]),M+np.array([sx*0.031,0.0,-0.01])],8)
-        d+=line_field(co,nr,P,PN,-0.0005*scale,0.0045,taper)
-    # Lidfalten
-    for E in eyes:
+        P,PN=polyline(S,alar,6); d+=line_field(co,nr,P,PN,-0.0005*scale,0.0022)
+        # Nasolabial bewusst weggelassen (macht älter)
+        if False: P,PN=polyline(S,[sn+np.array([sx*0.020,0.004,0.004]),M+np.array([sx*0.027,0.0,0.008]),M+np.array([sx*0.031,0.0,-0.01])],8)
+        pass
+    # Lidfalten (aus: Geometrie hat sie schon; Linien ließen das Gesicht älter wirken)
+    for E in ([] if True else eyes):
         arc=[E+np.array([dx,-0.012,0.0105-28*dx*dx]) for dx in np.linspace(-0.012,0.013,7)]
         P,PN=polyline(S,arc,4); d+=line_field(co,nr,P,PN,-0.0006*scale,0.0016,taper)
     # Halssehnen (M. sternocleidomastoideus): hinter dem Ohr -> Brustbein neben der Drosselgrube
@@ -105,7 +109,7 @@ def face_offsets(co, nr, S, lip_u, lip_l, eyes, notch, scale=1.0):
 
 def face_zones(co, nr, lip_u, lip_l, eyes):
     """Glatte Zonen-Masken (0..1) für Glanz und gemalte Farbzonen. Nur große, weiche Gaußverläufe."""
-    M=(co[lip_u]+co[lip_l])/2
+    M=(_pt(co,lip_u)+_pt(co,lip_l))/2
     sel=(np.abs(co[:,0])<0.004)&(co[:,2]>M[2]+0.01)&(co[:,2]<M[2]+0.06)
     tip=co[sel][np.argmin(co[sel][:,1])]
     E=(eyes[0]+eyes[1])/2
@@ -115,8 +119,8 @@ def face_zones(co, nr, lip_u, lip_l, eyes):
     fore=g(E+np.array([0,-0.01,0.05]),0.05,0.06,0.035)*front
     nose=np.maximum(g(tip,0.012,0.02,0.02),g((tip+E)/2,0.008,0.03,0.022))
     lips=g(M,0.025,0.02,0.012)
-    cheekL=g(np.array([eyes[0][0]-0.008,eyes[0][1]-0.005,eyes[0][2]-0.035]),0.03,0.04,0.026)
-    cheekR=g(np.array([eyes[1][0]+0.008,eyes[1][1]-0.005,eyes[1][2]-0.035]),0.03,0.04,0.026)
+    cheekL=g(np.array([eyes[0][0]-0.012,eyes[0][1]-0.012,eyes[0][2]-0.05]),0.03,0.04,0.024)
+    cheekR=g(np.array([eyes[1][0]+0.012,eyes[1][1]-0.012,eyes[1][2]-0.05]),0.03,0.04,0.024)
     cheeks=np.maximum(cheekL,cheekR)
     under=np.maximum(g(eyes[0]+np.array([0,-0.012,-0.014]),0.014,0.02,0.007),g(eyes[1]+np.array([0,-0.012,-0.014]),0.014,0.02,0.007))
     nostr=np.maximum(g(tip+np.array([0.011,0.008,-0.006]),0.009,0.015,0.008),g(tip+np.array([-0.011,0.008,-0.006]),0.009,0.015,0.008))
@@ -127,3 +131,11 @@ def face_zones(co, nr, lip_u, lip_l, eyes):
     warm=np.clip(0.8*under,0,1)
     cool=np.clip(0.5*jaw,0,1)
     return gloss, red, warm, cool
+
+def face_mask(co, nr, lip_u, lip_l, eyes):
+    """1 im Gesicht (Stirn bis Kinn, vorne), 0 an Ohren/Hals/Hinterkopf – Gesicht bleibt glatt und jung."""
+    M=(_pt(co,lip_u)+_pt(co,lip_l))/2; E=(eyes[0]+eyes[1])/2
+    c=(M+E)/2+np.array([0,0,0.015])
+    r=(co-c)/np.array([0.06,0.08,0.085])
+    front=np.clip((-nr[:,1]+0.2)/0.5,0,1)
+    return np.exp(-np.maximum((r*r).sum(1)-0.6,0)*3)*front

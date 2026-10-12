@@ -131,13 +131,13 @@ namespace CrimeSim
                 case "r-cheek-bones-decr-incr": return 0.35f;
                 case "l-cheek-trans-down-up": return 0.2f;
                 case "r-cheek-trans-down-up": return 0.2f;
-                case "l-eye-scale-decr-incr": return 0.15f;
-                case "r-eye-scale-decr-incr": return 0.15f;
+                case "l-eye-scale-decr-incr": return 0.25f;
+                case "r-eye-scale-decr-incr": return 0.25f;
                 case "l-eye-corner2-down-up": return 0.25f;
                 case "r-eye-corner2-down-up": return 0.25f;
-                case "nose-scale-horiz-decr-incr": return -0.2f;
+                case "nose-scale-horiz-decr-incr": return -0.3f;
                 case "nose-width1-decr-incr": return -0.25f;
-                case "nose-point-width-decr-incr": return -0.3f;
+                case "nose-point-width-decr-incr": return -0.35f;
                 case "nose-volume-decr-incr": return -0.15f;
                 case "eyebrows-trans-backward-forward": return -0.3f;
                 case "forehead-trans-backward-forward": return -0.15f;
@@ -147,11 +147,26 @@ namespace CrimeSim
                 case "neck-scale-depth-decr-incr": return -0.2f;
                 case "neck-scale-vert-decr-incr": return 0.15f;
                 case "neck-double-decr-incr": return -0.3f;
-                case "l-cheek-volume-decr-incr": return 0.2f;
-                case "r-cheek-volume-decr-incr": return 0.2f;
+                case "l-cheek-volume-decr-incr": return 0.05f;
+                case "r-cheek-volume-decr-incr": return 0.05f;
                 case "l-upperarm-shoulder-muscle-decr-incr": return -0.3f;
                 case "r-upperarm-shoulder-muscle-decr-incr": return -0.3f;
                 case "measure-neck-height-decr-incr": return 0.15f;
+                case "l-eye-bag-decr-incr": return -0.3f;
+                case "r-eye-bag-decr-incr": return -0.3f;
+                case "l-eye-height2-decr-incr": return 0.15f;
+                case "r-eye-height2-decr-incr": return 0.15f;
+                case "nose-nostrils-width-decr-incr": return -0.3f;
+                case "nose-scale-vert-decr-incr": return -0.1f;
+                case "nose-point-down-up": return 0.15f;
+                case "mouth-angles-down-up": return 0.15f;
+                case "mouth-laugh-lines-in-out": return -0.3f;
+                case "eyebrows-trans-down-up": return 0.1f;
+                case "eyebrows-angle-down-up": return 0.15f;
+                case "head-scale-horiz-decr-incr": return -0.08f;
+                case "head-invertedtriangular": return 0.25f;
+                case "head-fat-decr-incr": return -0.2f;
+                case "head-age-decr-incr": return -0.15f;
                 default: return 0f;
             }
         }

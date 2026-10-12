@@ -50,7 +50,7 @@ namespace CrimeSim.EditorTools
             camData.antialiasingQuality = UnityEngine.Rendering.Universal.AntialiasingQuality.High;
             camData.renderPostProcessing = true;
             // Licht-Stimmungen wie in der Stil-Testszene (Standard: Abend)
-            StylizedLookBuilder.BuildLightRigs(cam, 1);
+            StylizedLookBuilder.BuildLightRigs(cam, 3); // Innenraum warm als Standard
             camGo.transform.position = new Vector3(0f, 1f, 3.5f);
             camGo.transform.rotation = Quaternion.Euler(5f, 180f, 0f);
             var orbit = camGo.AddComponent<CrimeSim.CreatorOrbitCamera>();

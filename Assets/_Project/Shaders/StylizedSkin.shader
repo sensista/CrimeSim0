@@ -63,7 +63,7 @@ Shader "CrimeSim/StylizedSkin"
         [Normal][NoScaleOffset] _BumpMap ("Normal Map", 2D) = "bump" {}
         _BumpScale ("Normal-Stärke (Form-Details)", Range(0, 2)) = 0.8
         [NoScaleOffset] _DetailMap ("Details (R Kavität, G Lippen, B Glanz-Zonen)", 2D) = "gray" {}
-        _CavityStrength ("Kavität-Tönung", Range(0, 1)) = 0.6
+        _CavityStrength ("Kavität-Tönung", Range(0, 1)) = 0.4
         _CavityColor ("Kavität-Farbe", Color) = (0.62, 0.38, 0.36, 1)
         _LipColor ("Lippen-Farbe", Color) = (0.9, 0.55, 0.52, 1)
         _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.7
