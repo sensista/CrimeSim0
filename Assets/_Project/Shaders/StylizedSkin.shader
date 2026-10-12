@@ -15,7 +15,7 @@ Shader "CrimeSim/StylizedSkin"
         _ToneReference ("Referenz-Hautfarbe der Textur", Color) = (0.87, 0.69, 0.55, 1)
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
         _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.94, 0.87, 1)
-        _Saturation ("Hautsättigung", Range(0, 1.5)) = 1.1
+        _Saturation ("Hautsättigung", Range(0, 1.5)) = 1.0
 
         [Header(Gemalte Lichtbaender)]
         _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.5
@@ -60,9 +60,15 @@ Shader "CrimeSim/StylizedSkin"
         _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 4
 
         [Header(Normal Map)]
-        [Toggle(_NORMALMAP)] _UseNormalMap ("Normal Map benutzen", Float) = 0
         [Normal][NoScaleOffset] _BumpMap ("Normal Map", 2D) = "bump" {}
-        _BumpScale ("Normal-Stärke", Range(0, 2)) = 0.5
+        _BumpScale ("Normal-Stärke (Form-Details)", Range(0, 2)) = 0.8
+        [NoScaleOffset] _DetailMap ("Details (R Kavität, G Lippen)", 2D) = "gray" {}
+        _CavityStrength ("Kavität-Tönung", Range(0, 1)) = 0.6
+        _CavityColor ("Kavität-Farbe", Color) = (0.62, 0.38, 0.36, 1)
+        _LipColor ("Lippen-Farbe", Color) = (0.9, 0.55, 0.52, 1)
+        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.5
+        _LipBorder ("Lippenrand dunkler", Range(0, 1)) = 0.35
+        _LipGloss ("Lippen-Glanz", Range(0, 3)) = 1.2
 
         [Header(Kleidung)]
         _HideMask ("Körper ausblenden (R Höschen, G Top, B Slip)", Vector) = (0, 0, 0, 0)
@@ -112,6 +118,12 @@ Shader "CrimeSim/StylizedSkin"
             half _RimStrength;
             half _RimPower;
             half _BumpScale;
+            half _CavityStrength;
+            half4 _CavityColor;
+            half4 _LipColor;
+            half _LipStrength;
+            half _LipBorder;
+            half _LipGloss;
             float4 _HideMask;
             half _Cutoff;
         CBUFFER_END
@@ -121,6 +133,7 @@ Shader "CrimeSim/StylizedSkin"
         TEXTURE2D(_AOMap);        SAMPLER(sampler_AOMap);
         TEXTURE2D(_BlushMask);    SAMPLER(sampler_BlushMask);
         TEXTURE2D(_ThicknessMap); SAMPLER(sampler_ThicknessMap);
+        TEXTURE2D(_DetailMap);    SAMPLER(sampler_DetailMap);
         TEXTURE2D(_BumpMap);      SAMPLER(sampler_BumpMap);
 
         half CSAlpha(float2 uv) { return 1.0h; }
@@ -138,7 +151,6 @@ Shader "CrimeSim/StylizedSkin"
             #pragma vertex CSForwardVert
             #pragma fragment Frag
 
-            #pragma shader_feature_local _NORMALMAP
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _ADDITIONAL_LIGHTS
             #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
@@ -153,6 +165,7 @@ Shader "CrimeSim/StylizedSkin"
 
             // Pro Pixel gesetzt, in CSShadeLight benutzt
             static half gThin;
+            static half gLip;
 
             // Glatte, weiche Licht-Rampe (kein Rauschen, keine Stufen)
             half SmoothRamp(half x) { return smoothstep(0.0h, 1.0h, x) * 0.6h + x * 0.4h; }
@@ -181,7 +194,7 @@ Shader "CrimeSim/StylizedSkin"
                 float dd = NdotH * NdotH * (a2 - 1.0) + 1.0;
                 float D = a2 / (PI * dd * dd);
                 half F = 0.028h + 0.972h * pow(1.0h - saturate(dot(light.direction, h)), 5.0h);
-                half spec = (half)(D * 0.25) * F * saturate(NdotL) * sh * _SpecStrength;
+                half spec = (half)(D * 0.25) * F * saturate(NdotL) * sh * _SpecStrength * (1.0h + gLip * _LipGloss);
                 col += spec.xxx;
 
                 // Gegenlicht an dünnen Stellen
@@ -214,6 +227,14 @@ Shader "CrimeSim/StylizedSkin"
                 half ao = SAMPLE_TEXTURE2D(_AOMap, sampler_AOMap, i.uv).r;
                 albedo *= lerp(1.0h.xxx, lerp(_AOColor.rgb, 1.0h.xxx, ao), _AOStrength);
 
+                // Form-Details: Kavität (weich, warm) + Lippen mit dunklerem Rand
+                half2 det = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap, i.uv).rg;
+                half cav = saturate((0.5h - det.r) * 2.0h);
+                albedo *= lerp(1.0h.xxx, _CavityColor.rgb, cav * _CavityStrength);
+                gLip = det.g;
+                albedo = lerp(albedo, albedo * _LipColor.rgb * 1.2h, det.g * _LipStrength);
+                half border = saturate(det.g * (1.0h - det.g) * 4.0h);
+                albedo *= 1.0h - border * _LipBorder * 0.5h;
                 half lum = dot(albedo, half3(0.3h, 0.59h, 0.11h));
                 albedo = saturate(lerp(lum.xxx, albedo, _Saturation));
                 gThin = SAMPLE_TEXTURE2D(_ThicknessMap, sampler_ThicknessMap, i.uv).r;
@@ -221,10 +242,8 @@ Shader "CrimeSim/StylizedSkin"
                 half3 n = normalize(i.normalWS);
                 half3 t = normalize(i.tangentWS.xyz);
                 half3 bt = cross(n, t) * i.tangentWS.w;
-            #if defined(_NORMALMAP)
                 half3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, i.uv), _BumpScale);
                 n = normalize(mul(nTS, half3x3(t, bt, n)));
-            #endif
                 n = isFrontFace ? n : -n;
 
                 CSSurface s = (CSSurface)0;

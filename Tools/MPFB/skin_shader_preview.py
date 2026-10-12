@@ -41,7 +41,7 @@ def light(name,typ,col,en,loc,rot,size=1.0):
     o=bpy.data.objects.new(name,l); sc.collection.objects.link(o); o.location=loc; o.rotation_euler=[math.radians(a) for a in rot]; return o
 def img(n,cs='Non-Color'):
     i=bpy.data.images.load(T+n); i.colorspace_settings.name=cs; return i
-I={k:img(v) for k,v in dict(var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png").items()}
+I={k:img(v) for k,v in dict(nrm="skin_normal.png",det="skin_detail.png",var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png").items()}
 I["base"]=img("skin_painted_female.png",'sRGB')
 def mat(P,tone):
     m=bpy.data.materials.new(f"skin_{P}_{tone}"); m.use_nodes=True; nt=m.node_tree; N=nt.nodes; L=nt.links; N.clear()
@@ -89,7 +89,15 @@ def mat(P,tone):
     ao=sep(tex("ao"))[0]
     alb=mix(alb,mix((0.66,0.4,0.38,1),(1,1,1,1),ao),0.6,'MULTIPLY')
     # Licht: weißes Diffuse -> Shader to RGB -> Helligkeit
+    dt=sep(tex("det"))
+    cav=math_('MAXIMUM',math_('MULTIPLY',math_('SUBTRACT',0.5,dt[0]),2.0),0.0)
+    alb=mix(alb,mix(alb,(0.62,0.38,0.36,1),1.0,'MULTIPLY'),math_('MULTIPLY',cav,0.6))
+    alb=mix(alb,mix(alb,(1.08,0.66,0.62,1),1.0,'MULTIPLY'),math_('MULTIPLY',dt[1],0.5))
+    brd=math_('MULTIPLY',math_('MULTIPLY',dt[1],math_('SUBTRACT',1.0,dt[1])),4.0)
+    alb=mix(alb,mix(alb,(0.82,0.82,0.82,1),1.0,'MULTIPLY'),brd)
+    nm=N.new('ShaderNodeNormalMap'); nm.inputs[0].default_value=0.8; L.new(tex("nrm"),nm.inputs[1])
     d=N.new('ShaderNodeBsdfDiffuse'); d.inputs[0].default_value=(1,1,1,1)
+    L.new(nm.outputs[0],d.inputs['Normal'])
     s2r=N.new('ShaderNodeShaderToRGB'); L.new(d.outputs[0],s2r.inputs[0])
     irr=s2r.outputs[0]
     lum=N.new('ShaderNodeRGBToBW'); L.new(irr,lum.inputs[0])
@@ -114,14 +122,14 @@ def mat(P,tone):
     # Gegenlicht dünne Stellen (vereinfacht: konstanter warmer Zusatz)
     col=mix(col,mix(alb,(1.0,0.4,0.3,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("thick"))[0],0.15),'ADD')
     # Mitteltöne entsättigen
-    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.25
+    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.1; hsv.inputs['Hue'].default_value=0.49
     col=hsv.outputs[0]
     # Randlicht
     fr_=N.new('ShaderNodeLayerWeight'); fr_.inputs[0].default_value=0.12
     col=mix(col,mix(alb,(1,0.82,0.7,1),1.0,'MULTIPLY'),math_('MULTIPLY',fr_.outputs['Facing'],0.15),'ADD')
     e=N.new('ShaderNodeEmission'); L.new(col,e.inputs[0]); e.inputs[1].default_value=1.0
     # dezentes gemaltes Glanzlicht
-    g=N.new('ShaderNodeBsdfGlossy'); g.inputs['Roughness'].default_value=0.45
+    g=N.new('ShaderNodeBsdfGlossy'); L.new(nm.outputs[0],g.inputs['Normal']); g.inputs['Roughness'].default_value=0.45
     ad=N.new('ShaderNodeAddShader'); L.new(e.outputs[0],ad.inputs[0])
     g.inputs['Roughness'].default_value=0.4; g.distribution='GGX'
     fz=N.new('ShaderNodeFresnel'); fz.inputs[0].default_value=1.4

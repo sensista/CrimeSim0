@@ -178,6 +178,14 @@ namespace CrimeSim.EditorTools
             }
             Tex("skin_variation.png", "_VariationMap", false);
             Tex("skin_thickness.png", "_ThicknessMap", false);
+            Tex("skin_detail.png", "_DetailMap", false);
+            {
+                string np = CharTexFolder + "/skin_normal.png";
+                var ni = AssetImporter.GetAtPath(np) as TextureImporter;
+                if (ni != null && ni.textureType != TextureImporterType.NormalMap) { ni.textureType = TextureImporterType.NormalMap; ni.wrapMode = TextureWrapMode.Clamp; ni.SaveAndReimport(); }
+                var nt = AssetDatabase.LoadAssetAtPath<Texture2D>(np);
+                if (nt != null) m.SetTexture("_BumpMap", nt);
+            }
             EditorUtility.SetDirty(m);
             return m;
         }
