@@ -1,9 +1,9 @@
 {
- "chin-width-decr-incr": -0.35,
- "chin-prominent-decr-incr": -0.2,
+ "chin-width-decr-incr": -0.4,
+ "chin-prominent-decr-incr": -0.25,
  "chin-height-decr-incr": -0.15,
  "chin-bones-decr-incr": -0.3,
- "head-oval": 0.3,
+ "head-oval": 0.4,
  "l-cheek-bones-decr-incr": 0.35,
  "r-cheek-bones-decr-incr": 0.35,
  "l-cheek-trans-down-up": 0.2,
@@ -20,5 +20,12 @@
  "forehead-trans-backward-forward": -0.15,
  "mouth-cupidsbow-decr-incr": 0.3,
  "mouth-upperlip-volume-decr-incr": 0.15,
- "neck-scale-horiz-decr-incr": -0.2
+ "neck-scale-horiz-decr-incr": -0.35,
+ "neck-scale-depth-decr-incr": -0.2,
+ "neck-scale-vert-decr-incr": 0.25,
+ "neck-double-decr-incr": -0.3,
+ "l-cheek-volume-decr-incr": 0.2,
+ "r-cheek-volume-decr-incr": 0.2,
+ "l-upperarm-shoulder-muscle-decr-incr": -0.3,
+ "r-upperarm-shoulder-muscle-decr-incr": -0.3
 }

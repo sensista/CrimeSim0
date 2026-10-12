@@ -38,6 +38,12 @@ namespace CrimeSim
         [SerializeField] private Texture femaleSkinTexture;
         [Tooltip("Optional: Hauttextur für männliche Figuren (gender >= 0.5). Leer = Material-Textur.")]
         [SerializeField] private Texture maleSkinTexture;
+        [Tooltip("Form-Detail Normal Map weiblich/männlich (gebacken aus der jeweiligen Standardform).")]
+        [SerializeField] private Texture femaleNormalMap;
+        [SerializeField] private Texture maleNormalMap;
+        [Tooltip("Detail-Map (R Kavität, G Lippen) weiblich/männlich.")]
+        [SerializeField] private Texture femaleDetailMap;
+        [SerializeField] private Texture maleDetailMap;
 
         public MPFBManifest Manifest { get; private set; }
         public bool IsReady => Manifest != null;
@@ -116,11 +122,11 @@ namespace CrimeSim
         {
             switch (id)
             {
-                case "chin-width-decr-incr": return -0.35f;
-                case "chin-prominent-decr-incr": return -0.2f;
+                case "chin-width-decr-incr": return -0.4f;
+                case "chin-prominent-decr-incr": return -0.25f;
                 case "chin-height-decr-incr": return -0.15f;
                 case "chin-bones-decr-incr": return -0.3f;
-                case "head-oval": return 0.3f;
+                case "head-oval": return 0.4f;
                 case "l-cheek-bones-decr-incr": return 0.35f;
                 case "r-cheek-bones-decr-incr": return 0.35f;
                 case "l-cheek-trans-down-up": return 0.2f;
@@ -137,7 +143,14 @@ namespace CrimeSim
                 case "forehead-trans-backward-forward": return -0.15f;
                 case "mouth-cupidsbow-decr-incr": return 0.3f;
                 case "mouth-upperlip-volume-decr-incr": return 0.15f;
-                case "neck-scale-horiz-decr-incr": return -0.2f;
+                case "neck-scale-horiz-decr-incr": return -0.35f;
+                case "neck-scale-depth-decr-incr": return -0.2f;
+                case "neck-scale-vert-decr-incr": return 0.25f;
+                case "neck-double-decr-incr": return -0.3f;
+                case "l-cheek-volume-decr-incr": return 0.2f;
+                case "r-cheek-volume-decr-incr": return 0.2f;
+                case "l-upperarm-shoulder-muscle-decr-incr": return -0.3f;
+                case "r-upperarm-shoulder-muscle-decr-incr": return -0.3f;
                 default: return 0f;
             }
         }
@@ -422,6 +435,11 @@ namespace CrimeSim
                 if (m != null && m.HasProperty(BaseMapId)) mpb.SetTexture(BaseMapId, skinTex);
                 if (m != null && m.HasProperty(MainTexId)) mpb.SetTexture(MainTexId, skinTex);
             }
+            bool male = GetValue("gender") >= 0.5f;
+            Texture nrm = male ? maleNormalMap : femaleNormalMap;
+            Texture det = male ? maleDetailMap : femaleDetailMap;
+            if (nrm != null) mpb.SetTexture("_BumpMap", nrm);
+            if (det != null) mpb.SetTexture("_DetailMap", det);
             // Unterwäsche: Körper darunter ausblenden (R Höschen, G Top, B Slip)
             Vector4 hide = GetValue("gender") >= 0.5f ? new Vector4(0f, 0f, 1f, 0f) : new Vector4(1f, 1f, 0f, 0f);
             hide = Vector4.Max(hide, extraHide);

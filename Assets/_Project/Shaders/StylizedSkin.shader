@@ -14,7 +14,7 @@ Shader "CrimeSim/StylizedSkin"
         [MainColor] _BaseColor ("Hautfarbe (Creator)", Color) = (0.87, 0.69, 0.55, 1)
         _ToneReference ("Referenz-Hautfarbe der Textur", Color) = (0.87, 0.69, 0.55, 1)
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
-        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.94, 0.87, 1)
+        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.92, 0.88, 1)
         _Saturation ("Hautsättigung", Range(0, 1.5)) = 1.0
 
         [Header(Gemalte Lichtbaender)]
@@ -24,9 +24,9 @@ Shader "CrimeSim/StylizedSkin"
         _TerminatorStrength ("Terminator-Stärke", Range(0, 1)) = 0.6
         _ShadowTint ("Schatten kühl", Color) = (0.6, 0.52, 0.66, 1)
         _ShadowWarm ("Schatten warm", Color) = (0.72, 0.48, 0.44, 1)
-        _ShadowStrength ("Eigenschatten-Stärke", Range(0, 1)) = 0.45
+        _ShadowStrength ("Eigenschatten-Stärke", Range(0, 1)) = 1
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
-        _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.1
+        _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.02
 
 
         [Header(Gemalte Farbvariation)]
@@ -174,7 +174,7 @@ Shader "CrimeSim/StylizedSkin"
             {
                 half NdotL = dot(s.normalWS, light.direction);
                 half sh = lerp(1.0h, light.shadowAttenuation, _ShadowStrength);
-                sh = lerp(sh, 1.0h, saturate(1.0h - abs(NdotL) * 3.0h) * 0.5h);
+                sh = lerp(sh, 1.0h, saturate(1.0h - abs(NdotL) * 3.0h) * 0.25h); // nur Schatten-Akne am Terminator dämpfen
                 half w = saturate((NdotL + _Wrap) / (1.0h + _Wrap)) * sh;
                 half lit = SmoothRamp(w);
 

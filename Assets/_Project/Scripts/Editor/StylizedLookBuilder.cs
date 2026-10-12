@@ -86,6 +86,22 @@ namespace CrimeSim.EditorTools
                     var mm = so.FindProperty("maleSkinTexture");
                     if (f != null) f.objectReferenceValue = femaleTex;
                     if (mm != null) mm.objectReferenceValue = maleTex;
+                    void SetTex(string prop, string file, bool normal)
+                    {
+                        string tp = CharTexFolder + "/" + file;
+                        var ti = AssetImporter.GetAtPath(tp) as TextureImporter;
+                        if (ti != null && (ti.sRGBTexture || (normal && ti.textureType != TextureImporterType.NormalMap) || ti.wrapMode != TextureWrapMode.Clamp))
+                        {
+                            if (normal) ti.textureType = TextureImporterType.NormalMap; else ti.sRGBTexture = false;
+                            ti.wrapMode = TextureWrapMode.Clamp; ti.SaveAndReimport();
+                        }
+                        var sp = so.FindProperty(prop);
+                        if (sp != null) sp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<Texture2D>(tp);
+                    }
+                    SetTex("femaleNormalMap", "skin_normal_female.png", true);
+                    SetTex("maleNormalMap", "skin_normal_male.png", true);
+                    SetTex("femaleDetailMap", "skin_detail_female.png", false);
+                    SetTex("maleDetailMap", "skin_detail_male.png", false);
                     so.ApplyModifiedPropertiesWithoutUndo();
                 }
                 PrefabUtility.SaveAsPrefabAsset(root, path);
@@ -178,9 +194,9 @@ namespace CrimeSim.EditorTools
             }
             Tex("skin_variation.png", "_VariationMap", false);
             Tex("skin_thickness.png", "_ThicknessMap", false);
-            Tex("skin_detail.png", "_DetailMap", false);
+            Tex("skin_detail_female.png", "_DetailMap", false);
             {
-                string np = CharTexFolder + "/skin_normal.png";
+                string np = CharTexFolder + "/skin_normal_female.png";
                 var ni = AssetImporter.GetAtPath(np) as TextureImporter;
                 if (ni != null && ni.textureType != TextureImporterType.NormalMap) { ni.textureType = TextureImporterType.NormalMap; ni.wrapMode = TextureWrapMode.Clamp; ni.SaveAndReimport(); }
                 var nt = AssetDatabase.LoadAssetAtPath<Texture2D>(np);

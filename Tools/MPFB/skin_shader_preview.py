@@ -41,7 +41,7 @@ def light(name,typ,col,en,loc,rot,size=1.0):
     o=bpy.data.objects.new(name,l); sc.collection.objects.link(o); o.location=loc; o.rotation_euler=[math.radians(a) for a in rot]; return o
 def img(n,cs='Non-Color'):
     i=bpy.data.images.load(T+n); i.colorspace_settings.name=cs; return i
-I={k:img(v) for k,v in dict(nrm="skin_normal.png",det="skin_detail.png",var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png").items()}
+I={k:img(v) for k,v in dict(nrm="skin_normal_female.png",det="skin_detail_female.png",var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png").items()}
 I["base"]=img("skin_painted_female.png",'sRGB')
 def mat(P,tone):
     m=bpy.data.materials.new(f"skin_{P}_{tone}"); m.use_nodes=True; nt=m.node_tree; N=nt.nodes; L=nt.links; N.clear()
@@ -72,7 +72,7 @@ def mat(P,tone):
     def sep(c):
         n=N.new('ShaderNodeSeparateColor'); L.new(c,n.inputs[0]); return n.outputs
     ref=(0.87,0.69,0.55); ratio=tuple((tone[i]/ref[i])**2.2 for i in range(3))+(1,)  # Unity: Farben im Linear-Raum
-    alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.94,0.87,1),1.0,'MULTIPLY')
+    alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.92,0.88,1),1.0,'MULTIPLY')
     VS=min(0.6*(0.5+1.4*P),1.0)
     v=sep(tex("var"))
     alb=mix(alb,(1.0,0.72,0.68,1),math_('MULTIPLY',v[0],VS),'MULTIPLY')
@@ -116,13 +116,16 @@ def mat(P,tone):
     litc=N.new('ShaderNodeCombineColor'); [L.new(lit,litc.inputs[i]) for i in range(3)]
     col=mix(col,litc.outputs[0],1.0,'MULTIPLY')
     # Lichtfarbe (Irradiance normiert) einmischen
-    col=mix(col,mix((1,1,1,1),irr,0.35,'MULTIPLY'),1.0,'MULTIPLY')
+    # Lichtfarbe vollständig (Chroma = Irradiance / Helligkeit) -> farbige Lichter wirken wie in Unity
+    lv=N.new('ShaderNodeCombineXYZ'); [L.new(math_('MAXIMUM',lum.outputs[0],0.001),lv.inputs[i]) for i in range(3)]
+    ch=N.new('ShaderNodeVectorMath'); ch.operation='DIVIDE'; L.new(irr,ch.inputs[0]); L.new(lv.outputs[0],ch.inputs[1])
+    col=mix(col,ch.outputs[0],1.0,'MULTIPLY')
     # Umgebung + Lift
-    col=mix(col,mix(alb,mix(shadowcol,(1,1,1,1),0.4),1.0,'MULTIPLY'),0.12,'ADD')
+    # (kein konstantes Zusatzlicht: Umgebung kommt aus der Welt wie SH in Unity)
     # Gegenlicht dünne Stellen (vereinfacht: konstanter warmer Zusatz)
     col=mix(col,mix(alb,(1.0,0.4,0.3,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("thick"))[0],0.15),'ADD')
     # Mitteltöne entsättigen
-    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.1; hsv.inputs['Hue'].default_value=0.49
+    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.0  # = Unity _Saturation
     col=hsv.outputs[0]
     # Randlicht
     fr_=N.new('ShaderNodeLayerWeight'); fr_.inputs[0].default_value=0.12
@@ -146,18 +149,45 @@ def mat(P,tone):
     L.new(fin.outputs[0],out.inputs[0])
     return m
 cam=bpy.data.objects.new("cam",bpy.data.cameras.new("cam")); sc.collection.objects.link(cam); sc.camera=cam
-cam.data.lens=135
+cam.data.lens=85
 top=max(v.co.z for v in body.data.vertices)
-light("key",'AREA',(1,0.82,0.62),160,(-0.9,-1.3,top+0.25),(78,0,-35),0.9)
-light("fill",'AREA',(0.6,0.7,1.0),25,(1.2,-0.8,1.6),(70,0,50),1.5)
-light("rim",'AREA',(1,0.72,0.5),140,(0.6,0.9,1.9),(-60,0,150),0.8)
+LIGHTS=[]
+def L_(*a,**k): o=light(*a,**k); LIGHTS.append(o); return o
+def rig(name):
+    for o in LIGHTS: bpy.data.objects.remove(o)
+    LIGHTS.clear(); bg=w.node_tree.nodes["Background"]
+    if name=="studio":
+        bg.inputs[0].default_value=(0.03,0.028,0.035,1)
+        L_("key",'AREA',(1,0.82,0.62),160,(-0.9,-1.3,top+0.25),(78,0,-35),0.9)
+        L_("fill",'AREA',(0.6,0.7,1.0),25,(1.2,-0.8,1.6),(70,0,50),1.5)
+        L_("rim",'AREA',(1,0.72,0.5),140,(0.6,0.9,1.9),(-60,0,150),0.8)
+    elif name=="day":   # Sonne + blauer Himmel
+        bg.inputs[0].default_value=(0.35,0.45,0.65,1)
+        o=L_("sun",'SUN',(1,0.96,0.9),4.0,(0,0,5),(50,0,-30)); o.data.angle=math.radians(1.5)
+    elif name=="neon":  # Nachtstraße: Magenta/Cyan-Neon, schwaches Natriumlicht
+        bg.inputs[0].default_value=(0.004,0.005,0.01,1)
+        L_("neonM",'AREA',(1.0,0.15,0.6),90,(1.1,-0.6,top-0.1),(80,0,60),0.4)
+        L_("neonC",'AREA',(0.1,0.8,1.0),60,(-1.0,-0.3,top-0.2),(85,0,-70),0.6)
+        L_("sodium",'POINT',(1.0,0.6,0.25),40,(0.3,-0.8,top+1.2),(0,0,0))
+    elif name=="interior":  # warme Stehlampe + schwaches Fenster
+        bg.inputs[0].default_value=(0.015,0.012,0.01,1)
+        L_("lamp",'POINT',(1.0,0.65,0.35),60,(0.7,-0.7,top-0.05),(0,0,0))
+        L_("window",'AREA',(0.7,0.8,1.0),30,(-1.5,0.2,top),(90,0,-90),1.5)
+rig("studio")
 def shoot(path,profile):
-    if profile: cam.location=(-1.25,-0.02,top-0.12); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
-    else: cam.location=(0,-1.25,top-0.12); cam.rotation_euler=(math.radians(90),0,0)
+    if profile: cam.location=(-1.35,-0.02,top-0.2); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
+    else: cam.location=(0,-1.35,top-0.2); cam.rotation_euler=(math.radians(90),0,0)
     sc.render.filepath=path; bpy.ops.render.render(write_still=True)
 TONES={"vlight":(0.98,0.86,0.78),"medium":(0.8,0.6,0.46),"darkbrown":(0.4,0.25,0.16),"vdark":(0.2,0.12,0.08)}
 MED=(0.87,0.69,0.55)
-jobs=[(0.0,MED,"base",True)]+[(0.0,v,k,False) for k,v in TONES.items()]
+jobs=[(0.0,MED,"base",True)]
+for P,tone,tag,prof in jobs:
+    m=mat(P,tone); body.data.materials.clear(); body.data.materials.append(m)
+    shoot(f"{OUT}/{tag}_front.png",False)
+    if prof: shoot(f"{OUT}/{tag}_side.png",True)
+for r in ("day","neon","interior"):
+    rig(r); shoot(f"{OUT}/light_{r}.png",False)
+jobs=[]
 for P,tone,tag,prof in jobs:
     m=mat(P,tone); body.data.materials.clear(); body.data.materials.append(m)
     shoot(f"{OUT}/{tag}_front.png",False)
