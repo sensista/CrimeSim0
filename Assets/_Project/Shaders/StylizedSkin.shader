@@ -14,8 +14,8 @@ Shader "CrimeSim/StylizedSkin"
         [MainColor] _BaseColor ("Hautfarbe (Creator)", Color) = (0.87, 0.69, 0.55, 1)
         _ToneReference ("Referenz-Hautfarbe der Textur", Color) = (0.87, 0.69, 0.55, 1)
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
-        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.9, 0.82, 1)
-        _Saturation ("Hautsättigung", Range(0, 1.5)) = 1.1
+        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.93, 0.88, 1)
+        _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.8
 
         [Header(Gemalte Lichtbaender)]
         _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.5
@@ -31,10 +31,10 @@ Shader "CrimeSim/StylizedSkin"
 
         [Header(Gemalte Farbvariation)]
         [NoScaleOffset] _VariationMap ("Variation (R rot, G gelb, B kühl)", 2D) = "black" {}
-        _RedTint ("Rötung", Color) = (1.0, 0.72, 0.68, 1)
-        _YellowTint ("Gelblich", Color) = (1.0, 0.95, 0.8, 1)
+        _RedTint ("Rötung", Color) = (1.0, 0.84, 0.82, 1)
+        _YellowTint ("Gelblich", Color) = (1.0, 0.98, 0.93, 1)
         _CoolTint ("Kühl", Color) = (0.86, 0.83, 0.93, 1)
-        _VariationStrength ("Variation-Stärke", Range(0, 1)) = 0.6
+        _VariationStrength ("Variation-Stärke", Range(0, 1)) = 0.35
 
         [Header(Gemalte Tiefe AO)]
         [NoScaleOffset] _AOMap ("AO-Map (gebacken)", 2D) = "white" {}
@@ -43,8 +43,8 @@ Shader "CrimeSim/StylizedSkin"
 
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
-        _BlushColor ("Rouge-Farbe", Color) = (0.95, 0.5, 0.48, 1)
-        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.55
+        _BlushColor ("Rouge-Farbe", Color) = (0.95, 0.62, 0.64, 1)
+        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.18
 
         [Header(Gegenlicht duenne Stellen)]
         [NoScaleOffset] _ThicknessMap ("Dünne Stellen (hell = dünn)", 2D) = "black" {}
@@ -65,10 +65,10 @@ Shader "CrimeSim/StylizedSkin"
         [NoScaleOffset] _DetailMap ("Details (R Kavität, G Lippen, B Glanz-Zonen)", 2D) = "gray" {}
         _CavityStrength ("Kavität-Tönung", Range(0, 1)) = 0.4
         _CavityColor ("Kavität-Farbe", Color) = (0.62, 0.38, 0.36, 1)
-        _LipColor ("Lippen-Farbe", Color) = (0.9, 0.55, 0.52, 1)
-        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.7
+        _LipColor ("Lippen-Farbe", Color) = (0.86, 0.62, 0.6, 1)
+        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.35
         _LipBorder ("Lippenrand dunkler", Range(0, 1)) = 0.35
-        _LipGloss ("Lippen-Glanz", Range(0, 3)) = 1.2
+        _LipGloss ("Lippen-Glanz", Range(0, 3)) = 0.4
 
         [Header(Kleidung)]
         _HideMask ("Körper ausblenden (R Höschen, G Top, B Slip)", Vector) = (0, 0, 0, 0)

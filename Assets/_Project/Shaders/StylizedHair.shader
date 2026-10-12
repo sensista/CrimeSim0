@@ -5,6 +5,7 @@ Shader "CrimeSim/StylizedHair"
     {
         [MainTexture] _BaseMap ("Haar-Textur (RGB + Alpha)", 2D) = "white" {}
         [MainColor] _BaseColor ("Haarfarbe", Color) = (0.25, 0.16, 0.1, 1)
+        _TexColorInfluence ("Textur-Farbanteil", Range(0, 1)) = 1
         _Cutoff ("Alpha-Clip", Range(0, 1)) = 0.4
         [Toggle(_ALPHATEST_ON)] _AlphaClip ("Alpha-Clip aktiv", Float) = 1
         _Wrap ("Wrap", Range(0, 1)) = 0.5
@@ -33,6 +34,7 @@ Shader "CrimeSim/StylizedHair"
         CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
             half4 _BaseColor;
+            half _TexColorInfluence;
             half _Cutoff;
             half _Wrap;
             half _AmbientStrength;
@@ -117,7 +119,7 @@ Shader "CrimeSim/StylizedHair"
                 s.normalWS = n;
                 s.viewDirWS = SafeNormalize(GetWorldSpaceViewDir(i.positionWS));
                 s.strandWS = _UseBitangent > 0.5h ? b : t;
-                s.albedo = saturate(tex.rgb * _BaseColor.rgb);
+                s.albedo = saturate(lerp(1.0h, tex.rgb, _TexColorInfluence) * _BaseColor.rgb);
 
                 half3 color = CSAccumulateLights(s, i.positionCS);
                 color += SampleSH(n) * s.albedo * _AmbientStrength;

@@ -53,8 +53,8 @@ namespace CrimeSim.EditorTools
 
             var skin = SkinMaterial(femaleTex != null ? femaleTex : LoadModelTex("skin_diffuse.png"));
             var eyes = EyeMaterial();
-            var brows = HairLikeMaterial("Stil_Augenbrauen", LoadModelTex("eyebrow001.png"), new Color(0.27f, 0.19f, 0.14f), 0.45f);
-            var lashes = HairLikeMaterial("Stil_Wimpern", LoadModelTex("eyelashes01.png"), new Color(0.12f, 0.09f, 0.08f), 0.45f);
+            var brows = HairLikeMaterial("Stil_Augenbrauen", LoadModelTex("eyebrow001.png"), new Color(0.30f, 0.22f, 0.17f), 0.3f);
+            var lashes = HairLikeMaterial("Stil_Wimpern", LoadModelTex("eyelashes01.png"), new Color(0.16f, 0.12f, 0.10f), 0.35f);
             var hair = HairLikeMaterial("Stil_Haare", null, new Color(0.25f, 0.16f, 0.1f), 0.4f);
 
             string path = PlayerPrefabBuilder.PrefabPath;
@@ -226,6 +226,7 @@ namespace CrimeSim.EditorTools
             }
             m.SetColor("_BaseColor", color);
             m.SetFloat("_Cutoff", cutoff);
+            m.SetFloat("_TexColorInfluence", 0.15f); // Brauen/Wimpern: Farbe aus Material, Textur nur für Alpha -> nicht pechschwarz
             m.SetFloat("_AlphaClip", 1f);
             m.EnableKeyword("_ALPHATEST_ON");
             m.SetFloat("_Cull", 0f);

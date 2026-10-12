@@ -4,7 +4,7 @@ import bpy, math, sys, os
 OUT=sys.argv[-1]; T="/workspace/CrimeSim0/Assets/_Project/Art/Textures/Character/"
 bpy.ops.wm.open_mainfile(filepath="/workspace/mpfb_player/out/PlayerBase.blend")
 sc=bpy.context.scene; sc.render.engine='BLENDER_EEVEE_NEXT'
-sc.view_settings.view_transform='AgX'; sc.view_settings.look='AgX - Base Contrast'
+sc.view_settings.view_transform='Khronos PBR Neutral'  # = URP Tonemapping Neutral
 sc.render.resolution_x=820; sc.render.resolution_y=1000
 sc.eevee.use_shadows=True
 # EEVEE-Next Schattenkarten erzeugen sonst feine "Kratzer" (Selbstschatten-Akne) auf glatten Wangen/Stirn –
@@ -14,6 +14,27 @@ sc.eevee.shadow_ray_count=1; sc.eevee.shadow_step_count=6; sc.eevee.shadow_resol
 body=bpy.data.objects["Body"]
 for o in bpy.data.objects:
     if o.type=='MESH': o.hide_render = o.name.startswith("Underwear") or o.name=="Teeth"
+# Augen/Wimpern/Brauen näher an CrimeSim/StylizedEye + StylizedHair (glänzende Hornhaut, weiche braune Haare)
+for o in bpy.data.objects:
+    if o.type!="MESH" or o.name not in ("Eyebrows","Eyelashes"): continue  # Augen unverändert
+    for m in o.data.materials:
+        if not m or not m.use_nodes: continue
+        for n in m.node_tree.nodes:
+            if n.type!='BSDF_PRINCIPLED': continue
+            if o.name=="Eyes":
+                n.inputs['Roughness'].default_value=0.04
+                n.inputs['Coat Weight'].default_value=1.0; n.inputs['Coat Roughness'].default_value=0.02
+                n.inputs['Specular IOR Level'].default_value=0.6
+            else:
+                tex=n.inputs['Base Color'].links[0].from_node if n.inputs['Base Color'].links else None
+                n.inputs['Roughness'].default_value=0.55
+                if tex is not None:
+                    mx=m.node_tree.nodes.new('ShaderNodeMix'); mx.data_type='RGBA'; mx.blend_type='MULTIPLY'
+                    mx.inputs[0].default_value=1.0; mx.inputs[7].default_value=(0.27*2.2,0.19*2.2,0.14*2.2,1)
+                    m.node_tree.links.new(tex.outputs[0],mx.inputs[6]); m.node_tree.links.new(mx.outputs[2],n.inputs['Base Color'])
+                else:
+                    n.inputs['Base Color'].default_value=(0.06,0.035,0.025,1)
+                m.blend_method='HASHED' if hasattr(m,'blend_method') else None
 # Gesicht leicht weiblich + Stil-Defaults
 kb=body.data.shape_keys.key_blocks
 def setkeys(d):
@@ -27,7 +48,7 @@ for sh in man["shapes"]:
     if sh.get("type")!="modifier": continue
     n=sh["name"]; side="l-" if n.startswith("l-") else "r-" if n.startswith("r-") else ""
     SL.setdefault(side+sh["slider"],{})[sh.get("direction","positive")]=n
-base_def={"l-eye-scale-decr-incr":0.3,"r-eye-scale-decr-incr":0.3,"mouth-upperlip-volume-decr-incr":0.25,"mouth-lowerlip-volume-decr-incr":0.3}
+base_def={"l-eye-scale-decr-incr":0.3,"r-eye-scale-decr-incr":0.3,"mouth-upperlip-volume-decr-incr":0.0,"mouth-lowerlip-volume-decr-incr":0.0}
 fem=json.load(open("/workspace/CrimeSim0/Tools/MPFB/female_face_defaults.json"))
 keys={"macro_g0_m05_w05":1.0}
 for k in set(base_def)|set(fem):
@@ -76,11 +97,11 @@ def mat(P,tone):
     def sep(c):
         n=N.new('ShaderNodeSeparateColor'); L.new(c,n.inputs[0]); return n.outputs
     ref=(0.87,0.69,0.55); ratio=tuple((tone[i]/ref[i])**2.2 for i in range(3))+(1,)  # Unity: Farben im Linear-Raum
-    alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.9,0.82,1),1.0,'MULTIPLY')
-    VS=min(0.6*(0.5+1.4*P),1.0)
+    alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.93,0.88,1),1.0,'MULTIPLY')
+    VS=min(0.35*(0.5+1.4*P),1.0)
     v=sep(tex("var"))
-    alb=mix(alb,(1.0,0.72,0.68,1),math_('MULTIPLY',v[0],VS),'MULTIPLY')
-    alb=mix(alb,(1.0,0.95,0.8,1),math_('MULTIPLY',v[1],VS),'MULTIPLY')
+    alb=mix(alb,(1.0,0.84,0.82,1),math_('MULTIPLY',v[0],VS),'MULTIPLY')
+    alb=mix(alb,(1.0,0.98,0.93,1),math_('MULTIPLY',v[1],VS),'MULTIPLY')
     alb=mix(alb,(0.86,0.83,0.93,1),math_('MULTIPLY',v[2],VS),'MULTIPLY')
     br=0.5  # keine Pinsel/Rauschen mehr
     bc=math_('ADD',math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.35*P),1.0)
@@ -89,14 +110,14 @@ def mat(P,tone):
     # Pinsel auf Farbe (warm): albedo*(1+bc*(1,.75,.55))
     cc=N.new('ShaderNodeCombineColor'); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.35*P)),cc.inputs[0]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.28*P)),cc.inputs[1]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.2*P)),cc.inputs[2])
     alb=mix(alb,cc.outputs[0],1.0,'MULTIPLY')
-    alb=mix(alb,(0.95*1.35,0.5*1.35,0.48*1.35,1),math_('MULTIPLY',sep(tex("blush"))[0],0.4),'MULTIPLY') if False else mix(alb,mix(alb,(1.28,0.68,0.65,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("blush"))[0],0.55))
+    alb=mix(alb,(0.95*1.35,0.5*1.35,0.48*1.35,1),math_('MULTIPLY',sep(tex("blush"))[0],0.4),'MULTIPLY') if False else mix(alb,mix(alb,(1.2,0.8,0.82,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("blush"))[0],0.18))
     ao=sep(tex("ao"))[0]
     alb=mix(alb,mix((0.66,0.4,0.38,1),(1,1,1,1),ao),0.6,'MULTIPLY')
     # Licht: weißes Diffuse -> Shader to RGB -> Helligkeit
     dt=sep(tex("det"))
     cav=math_('MAXIMUM',math_('MULTIPLY',math_('SUBTRACT',0.5,dt[0]),2.0),0.0)
     alb=mix(alb,mix(alb,(0.62,0.38,0.36,1),1.0,'MULTIPLY'),math_('MULTIPLY',cav,0.4))
-    alb=mix(alb,mix(alb,(1.08,0.66,0.62,1),1.0,'MULTIPLY'),math_('MULTIPLY',dt[1],0.7))
+    alb=mix(alb,mix(alb,(0.99,0.71,0.68,1),1.0,"MULTIPLY"),math_("MULTIPLY",dt[1],0.35))
     brd=math_('MULTIPLY',math_('MULTIPLY',dt[1],math_('SUBTRACT',1.0,dt[1])),4.0)
     alb=mix(alb,mix(alb,(0.82,0.82,0.82,1),1.0,'MULTIPLY'),brd)
     nm=N.new('ShaderNodeNormalMap'); nm.inputs[0].default_value=0.8; L.new(tex("nrm"),nm.inputs[1])
@@ -129,7 +150,7 @@ def mat(P,tone):
     # Gegenlicht dünne Stellen (vereinfacht: konstanter warmer Zusatz)
     col=mix(col,mix(alb,(1.0,0.4,0.3,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("thick"))[0],0.15),'ADD')
     # Mitteltöne entsättigen
-    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.1  # = Unity _Saturation
+    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=0.8  # = Unity _Saturation
     col=hsv.outputs[0]
     # Randlicht
     fr_=N.new('ShaderNodeLayerWeight'); fr_.inputs[0].default_value=0.12
