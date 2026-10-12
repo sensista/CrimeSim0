@@ -19,7 +19,8 @@ Shader "CrimeSim/StylizedSkin"
         _ShadowTint ("Schattenfarbe", Color) = (0.62, 0.42, 0.42, 1)
         _SSSColor ("Durchschein-Farbe (SSS)", Color) = (0.9, 0.35, 0.25, 1)
         _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.35
-        _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 0.8
+        _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
+        _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.06
 
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
@@ -63,6 +64,7 @@ Shader "CrimeSim/StylizedSkin"
             half4 _SSSColor;
             half _SSSStrength;
             half _AmbientStrength;
+            half _ShadowLift;
             half4 _BlushColor;
             half _BlushStrength;
             half _Smoothness;
@@ -150,6 +152,8 @@ Shader "CrimeSim/StylizedSkin"
                 half3 color = CSAccumulateLights(s, i.positionCS);
                 // Umgebung: Schattenseite farbig statt grau
                 color += SampleSH(n) * albedo * lerp(_ShadowTint.rgb, 1.0h.xxx, 0.35h) * _AmbientStrength;
+                // Dunkle Szenen: Haut säuft nicht ab, sondern bleibt warm getönt
+                color = max(color, albedo * _ShadowTint.rgb * _ShadowLift);
 
                 half NdotV = saturate(dot(n, s.viewDirWS));
                 half rim = pow(1.0h - NdotV, _RimPower) * _RimStrength;

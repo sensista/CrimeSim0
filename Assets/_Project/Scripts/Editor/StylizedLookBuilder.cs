@@ -202,9 +202,9 @@ namespace CrimeSim.EditorTools
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.2f, 0.21f, 0.27f);
-            RenderSettings.ambientEquatorColor = new Color(0.15f, 0.13f, 0.14f);
-            RenderSettings.ambientGroundColor = new Color(0.06f, 0.05f, 0.045f);
+            RenderSettings.ambientSkyColor = new Color(0.07f, 0.075f, 0.1f);
+            RenderSettings.ambientEquatorColor = new Color(0.05f, 0.045f, 0.05f);
+            RenderSettings.ambientGroundColor = new Color(0.02f, 0.018f, 0.016f);
             RenderSettings.skybox = null;
 
             // Figur
@@ -213,15 +213,19 @@ namespace CrimeSim.EditorTools
             fig.transform.position = Vector3.zero;
             var driver = fig.GetComponentInChildren<MPFBShapeDriver>();
 
-            // Lichter: warmes Hauptlicht, kühles Fülllicht, zwei Randlichter
-            MakeLight("Key Light (warm)", LightType.Directional, new Color(1f, 0.88f, 0.76f), 1.0f,
-                Quaternion.Euler(28f, 145f, 0f), Vector3.zero, LightShadows.Soft);
-            MakeLight("Fill Light (kühl)", LightType.Directional, new Color(0.62f, 0.72f, 1f), 0.2f,
-                Quaternion.Euler(12f, 220f, 0f), Vector3.zero, LightShadows.None);
-            MakeLight("Rim Light links", LightType.Spot, new Color(1f, 0.75f, 0.55f), 1.2f,
-                Quaternion.identity, new Vector3(-1.2f, 2.1f, -1.4f), LightShadows.None, new Vector3(0f, 1.4f, 0f));
-            MakeLight("Rim Light rechts", LightType.Spot, new Color(0.6f, 0.75f, 1f), 0.9f,
-                Quaternion.identity, new Vector3(1.3f, 1.9f, -1.3f), LightShadows.None, new Vector3(0f, 1.3f, 0f));
+            // Stimmung: dunkel, viele weiche indirekte Lichtquellen (Low-Key)
+            MakeLight("Key Light (warm, gedimmt)", LightType.Directional, new Color(1f, 0.82f, 0.64f), 0.45f,
+                Quaternion.Euler(30f, 140f, 0f), Vector3.zero, LightShadows.Soft);
+            MakeLight("Lampe warm (links vorne)", LightType.Point, new Color(1f, 0.6f, 0.3f), 1.4f,
+                Quaternion.identity, new Vector3(-1.1f, 1.5f, 1.0f), LightShadows.Soft).range = 3.5f;
+            MakeLight("Neon kühl (rechts)", LightType.Point, new Color(0.35f, 0.6f, 1f), 1.0f,
+                Quaternion.identity, new Vector3(1.4f, 1.7f, 0.4f), LightShadows.None).range = 3.5f;
+            MakeLight("Neon magenta (hinten rechts)", LightType.Point, new Color(0.9f, 0.3f, 0.7f), 0.6f,
+                Quaternion.identity, new Vector3(1.2f, 2.0f, -1.0f), LightShadows.None).range = 3f;
+            MakeLight("Boden-Bounce warm", LightType.Point, new Color(0.9f, 0.55f, 0.35f), 0.35f,
+                Quaternion.identity, new Vector3(0f, 0.15f, 0.8f), LightShadows.None).range = 2.5f;
+            MakeLight("Rim Light (dezent)", LightType.Spot, new Color(1f, 0.78f, 0.6f), 0.8f,
+                Quaternion.identity, new Vector3(-1.0f, 2.1f, -1.4f), LightShadows.None, new Vector3(0f, 1.4f, 0f));
 
             // Hintergrund
             var bdTex = AssetDatabase.LoadAssetAtPath<Texture2D>(BackdropTex);
@@ -332,7 +336,7 @@ namespace CrimeSim.EditorTools
             ca.colorFilter.Override(new Color(1f, 0.97f, 0.93f));
 
             var vig = Get<Vignette>(profile);
-            vig.intensity.Override(0.22f);
+            vig.intensity.Override(0.3f);
             vig.smoothness.Override(0.45f);
 
             EditorUtility.SetDirty(profile);
