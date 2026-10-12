@@ -17,9 +17,18 @@ Assets/_Project/
 docs/ROADMAP.md   Aufgaben & Meilensteine
 ```
 
-## Spielkonzept (noch offen)
-- **Genre:** _noch offen_
-- **Perspektive (2D/3D):** _noch offen_
-- **Spielerrolle:** _noch offen_ (z. B. Polizei, Gangster, Detektiv)
-- **Kernmechaniken:** _noch offen_
-- **Setting:** _noch offen_
+## Spielkonzept
+3D-Open-World-Crime-Sim in Unity 6, eine Mischung aus bekannten Vorbildern plus eigenen, neuen Mechaniken:
+- **GTA:** offene Stadt, Fahrzeuge, Polizei und Fahndungslevel
+- **Drug Dealer Simulator / Schedule 1:** ein illegales Geschäft aufbauen (Produktion, Verkauf, Kunden, Dealer, Geldwäsche)
+- **Die Sims:** Lebenssimulation mit Bedürfnissen, eigenem Zuhause und Beziehungen
+- **Eigene Ideen:** bestehende Mechaniken verbinden und neue erfinden
+
+**Perspektive:** 3D (Third oder First Person: _noch offen_)
+
+**Noch offen:**
+- Kamera: Third oder First Person
+- Setting und Stadt
+- Grafikstil
+- Umfang des ersten Prototyps
+- Eigene neue Kernmechaniken
