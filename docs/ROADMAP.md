@@ -14,7 +14,8 @@
 
 ## Phase 1: Vertical Slice (Prototyp)
 - [x] Umschaltbare Kamera Third/First Person (CameraController, Taste V)
-- [ ] Bewegung und Kamera in Unity testen und feinjustieren
+- [x] Testlevel per Editor-Menü (CrimeSim → Testlevel erstellen)
+- [ ] Bewegung und Kamera im Testlevel testen und feinjustieren
 - [ ] Kleine Stadtzone als Blockout (ein paar Straßen, Gebäude, Wohnung)
 - [ ] Interaktionssystem (Objekte und NPCs ansprechen oder benutzen)
 - [ ] Inventar (Gegenstände aufnehmen, lagern, abgeben)
