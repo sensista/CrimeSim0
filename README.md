@@ -44,6 +44,13 @@ Das Projekt nutzt die Universal Render Pipeline (URP 17.3.0 für Unity 6000.3).
 Hinweis: Render Graph aktiv lassen (Project Settings → Graphics → URP, Compatibility Mode aus).
 
 ## Character Creator
+**MPFB-Spielerfigur (neu):** `Assets/_Project/Art/Models/Player/PlayerBase.fbx` (+ `PlayerBase.shapes.json`, Details in der README dort).
+1. Nach dem Pull Unity öffnen und warten, bis das FBX importiert ist (Humanoid wird automatisch eingestellt; beim ersten Mal zweimal importiert).
+2. **CrimeSim → Spielerfigur Prefab erstellen**, danach **CrimeSim → Character Creator Szene erstellen** und **CrimeSim → Testlevel erstellen**.
+3. Creator: Tabs Körper, Kopf, Gesicht, Torso, Arme, Beine, Asymmetrie, Haut, Haare/Kleidung. Suche, Zufall, Vorlagen (Schmächtig, Kräftig, Sportlich, Übergewichtig), Tab zurücksetzen, Rückgängig (Strg+Z).
+4. Fehlt das FBX, wird automatisch die Platzhalter-Figur verwendet.
+
+Platzhalter-Figur (alt):
 1. Menü **CrimeSim → Character Creator Szene erstellen** (erzeugt `Scenes/CharacterCreator.unity`) und **CrimeSim → Testlevel erstellen** erneut ausführen (Player bekommt das neue Charakter-Rig). Beide Menüs tragen die Szenen in die Build Settings ein (Creator zuerst).
 2. `CharacterCreator` öffnen und Play drücken: Name, Größe, Statur, Kopfgröße, Körperfett, Muskeln, Hautfarbe, Frisur, Kleidung und Farben einstellen, **Zufall** würfelt. Das Menü links ist scrollbar.
    Kamera: **mittlere Maustaste** ziehen = drehen, **Shift + mittlere Maustaste** = hoch/runter am Körper, **Mausrad** = Zoom, Button **Ansicht zurücksetzen**.

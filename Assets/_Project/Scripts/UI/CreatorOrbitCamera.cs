@@ -70,7 +70,9 @@ namespace CrimeSim
             }
         }
 
-        private float HeightScale => character != null ? character.Appearance.heightScale : 1f;
+        private float HeightScale => character == null ? 1f
+            : character.MPFB != null && character.MPFB.CurrentHeight > 0.1f ? character.MPFB.CurrentHeight / 1.75f
+            : character.Appearance.heightScale;
 
         private void LateUpdate()
         {

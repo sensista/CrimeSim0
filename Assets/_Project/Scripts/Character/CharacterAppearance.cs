@@ -21,7 +21,42 @@ namespace CrimeSim
         public int shoesStyle;
         public Color shoesColor = new Color(0.1f, 0.1f, 0.1f);
 
-        public CharacterAppearance Clone() => (CharacterAppearance)MemberwiseClone();
+        [Tooltip("MPFB-Reglerwerte (Makros wie gender/age/height und Modifier wie nose-scale-vert-decr-incr).")]
+        public System.Collections.Generic.List<MPFBValue> mpfb = new System.Collections.Generic.List<MPFBValue>();
+
+        public CharacterAppearance Clone()
+        {
+            var c = (CharacterAppearance)MemberwiseClone();
+            c.mpfb = new System.Collections.Generic.List<MPFBValue>();
+            if (mpfb != null) foreach (var v in mpfb) c.mpfb.Add(new MPFBValue(v.id, v.value));
+            return c;
+        }
+
+        public bool TryGetMPFB(string id, out float value)
+        {
+            if (mpfb != null)
+                foreach (var v in mpfb)
+                    if (v.id == id) { value = v.value; return true; }
+            value = 0f;
+            return false;
+        }
+
+        public void SetMPFB(string id, float value)
+        {
+            if (mpfb == null) mpfb = new System.Collections.Generic.List<MPFBValue>();
+            foreach (var v in mpfb)
+                if (v.id == id) { v.value = value; return; }
+            mpfb.Add(new MPFBValue(id, value));
+        }
+    }
+
+    [System.Serializable]
+    public class MPFBValue
+    {
+        public string id;
+        public float value;
+        public MPFBValue() { }
+        public MPFBValue(string id, float value) { this.id = id; this.value = value; }
     }
 
     /// <summary>Veränderliche Körperwerte (Essen, Training, Aktivität wirken später hierauf).</summary>
@@ -45,23 +80,48 @@ namespace CrimeSim
     [System.Serializable]
     public class CharacterSaveData
     {
+        public const int CurrentVersion = 2;
+        [Tooltip("1 = Platzhalter-Rig, 2 = MPFB-Regler (appearance.mpfb).")]
+        public int version; // fehlt in alten Dateien => 0
         public CharacterAppearance appearance = new CharacterAppearance();
         public BodyStats body = BodyStats.Default;
 
         public const string FileName = "character";
 
+        /// <summary>Alte Dateien (ohne version-Feld => 0) auf das MPFB-Format heben.</summary>
+        public void Migrate()
+        {
+            if (appearance == null) appearance = new CharacterAppearance();
+            if (version >= CurrentVersion) return;
+            // Größe: heightScale bezog sich auf ~1,8 m. MPFB-Höhe: 0 = 1,30 m, 0,5 = 1,66 m, 1 = 2,37 m (Manifest)
+            if (!appearance.TryGetMPFB("height", out _))
+            {
+                float h = 1.8f * appearance.heightScale;
+                float v = h < 1.66f ? 0.5f * Mathf.InverseLerp(1.30f, 1.66f, h) : 0.5f + 0.5f * Mathf.InverseLerp(1.66f, 2.37f, h);
+                appearance.SetMPFB("height", Mathf.Clamp01(v));
+            }
+            // Statur (Knochenbau) grob auf Proportionen abbilden
+            if (!appearance.TryGetMPFB("proportions", out _))
+                appearance.SetMPFB("proportions", Mathf.Clamp01(Mathf.InverseLerp(0.8f, 1.25f, appearance.build)));
+            version = CurrentVersion;
+        }
+
         public static CharacterSaveData LoadOrDefault()
         {
             if (SaveSystem.TryLoadJson(FileName, out CharacterSaveData data))
             {
-                if (data.appearance == null) data.appearance = new CharacterAppearance();
+                data.Migrate();
                 data.body = data.body.Clamped();
                 return data;
             }
-            return new CharacterSaveData();
+            return new CharacterSaveData { version = CurrentVersion };
         }
 
-        public void Save() => SaveSystem.SaveJson(this, FileName);
+        public void Save()
+        {
+            version = CurrentVersion;
+            SaveSystem.SaveJson(this, FileName);
+        }
     }
 
     /// <summary>

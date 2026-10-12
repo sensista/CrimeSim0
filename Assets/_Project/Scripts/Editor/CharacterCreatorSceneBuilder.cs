@@ -46,6 +46,9 @@ namespace CrimeSim.EditorTools
             var preview = new GameObject("PreviewCharacter");
             preview.transform.position = new Vector3(0f, 0.1f, 0f);
             var applier = preview.AddComponent<CrimeSim.CharacterAppearanceApplier>();
+            var appSo = new SerializedObject(applier);
+            appSo.FindProperty("bodyModelPrefab").objectReferenceValue = PlayerPrefabBuilder.Build(); // null => Primitives
+            appSo.ApplyModifiedPropertiesWithoutUndo();
 
             // Kamera: Orbit-Kamera, Charakter rechts im Bild, links Platz für die UI
             var camGo = new GameObject("Main Camera");

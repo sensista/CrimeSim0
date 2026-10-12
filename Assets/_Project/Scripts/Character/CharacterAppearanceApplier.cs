@@ -28,7 +28,18 @@ namespace CrimeSim
         [SerializeField] private CharacterAppearance appearance = new CharacterAppearance();
         [SerializeField] private BodyStats body = new BodyStats(0.3f, 0.3f);
 
-        public CharacterAppearance Appearance => appearance;
+        public CharacterAppearance Appearance
+        {
+            get
+            {
+                if (MPFB != null) MPFB.WriteTo(appearance);
+                return appearance;
+            }
+        }
+
+        /// <summary>Gesetzt, wenn das MPFB-Spielermodell verwendet wird (sonst Platzhalter-Primitives).</summary>
+        public MPFBShapeDriver MPFB { get; private set; }
+        public bool HasBodyModel => bodyModelPrefab != null;
         public BodyStats Body => body;
         public CharacterPartLibrary Library => library;
 
@@ -66,6 +77,13 @@ namespace CrimeSim
         public void Apply(CharacterAppearance newAppearance)
         {
             appearance = newAppearance ?? new CharacterAppearance();
+            if (MPFB != null)
+            {
+                // MPFB-Modell nicht neu instanziieren (teuer) – nur Werte übernehmen
+                MPFB.SetAppearance(appearance);
+                MPFB.SetBodyShape(body.bodyFat, body.muscle);
+                return;
+            }
             Rebuild();
         }
 
@@ -99,19 +117,25 @@ namespace CrimeSim
             extraShapeTargets.Clear();
             appearanceTargets.Clear();
             System.Array.Clear(parts, 0, parts.Length);
+            MPFB = null;
 
             rig = new GameObject(RigName).transform;
             rig.SetParent(transform, false);
-            rig.localScale = Vector3.one * appearance.heightScale;
+            // MPFB-Modell skaliert sich selbst (Regler "height"); Primitives über heightScale
+            rig.localScale = bodyModelPrefab != null ? Vector3.one : Vector3.one * appearance.heightScale;
 
             if (bodyModelPrefab != null)
             {
                 var model = Instantiate(bodyModelPrefab, rig, false);
+                model.name = bodyModelPrefab.name;
+                MPFB = model.GetComponentInChildren<MPFBShapeDriver>();
+                if (MPFB != null && headAnchor != null) MPFB.SetHeadAnchor(headAnchor);
                 CollectShapeTargets(model);
                 BuildHairOnModel(model);
                 SetLayerRecursive(rig, gameObject.layer);
                 foreach (var t in appearanceTargets) t.SetAppearance(appearance);
                 SetBodyShape(body.bodyFat, body.muscle);
+                if (MPFB != null) MPFB.ApplyNow();
                 return;
             }
 

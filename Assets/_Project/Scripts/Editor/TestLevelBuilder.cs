@@ -80,9 +80,10 @@ namespace CrimeSim.EditorTools
             var playerGo = new GameObject("Player");
             playerGo.transform.position = new Vector3(0f, 0.05f, 0f);
             var cc = playerGo.AddComponent<CharacterController>();
-            cc.height = 1.8f;
-            cc.radius = 0.35f;
-            cc.center = new Vector3(0f, 0.9f, 0f);
+            // Startwerte für die neutrale MPFB-Figur (1,66 m); MPFBShapeDriver passt Höhe zur Laufzeit an
+            cc.height = 1.71f;
+            cc.radius = 0.3f;
+            cc.center = new Vector3(0f, 0.855f, 0f);
             cc.stepOffset = 0.3f;
             var playerController = playerGo.AddComponent<CrimeSim.PlayerController>();
 
@@ -116,6 +117,8 @@ namespace CrimeSim.EditorTools
 
             var aso = new SerializedObject(applier);
             aso.FindProperty("headAnchor").objectReferenceValue = head;
+            // MPFB-Spielerfigur (Fallback: Platzhalter-Primitives, wenn PlayerBase.fbx fehlt)
+            aso.FindProperty("bodyModelPrefab").objectReferenceValue = PlayerPrefabBuilder.Build();
             aso.ApplyModifiedPropertiesWithoutUndo();
 
             var pso = new SerializedObject(playerController);

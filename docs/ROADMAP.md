@@ -26,7 +26,12 @@
 - [x] Character Creator Grundsystem (Aussehen, Speichern, Platzhalter-Rig, Creator-Szene)
 - [x] Veränderlicher Körper: BodyCondition (Fett/Muskel), weiche Anpassung, Debug-Tasten F1–F4
 - [x] BlendShapeBodyTarget für echte Modelle (MPFB/Blender, Humanoid)
-- [ ] Erstes MPFB-Charaktermodell mit Rigify und Shape Keys (fat, muscle, build) importieren
+- [x] MPFB-Spielerfigur (neutral, 53-Knochen-Game-Engine-Skelett, 634 Shape Keys, Augen/Brauen/Wimpern/Zähne/Unterwäsche)
+- [x] Creator auf MPFB umgestellt: MPFBShapeDriver, Tabs aus dem Manifest, Suche, Zufall, Vorlagen, Rückgängig, character.json v2
+- [ ] MPFB-Figur in Unity testen (Avatar, Skelett-Anpassung, Materialien) und Ergebnis committen
+- [ ] Haare und Kleidung als MPFB-Assets (CC0) mit Shape Keys; CC-BY-Unterhose ersetzen
+- [ ] Optimierung: Creator-Shapes im Spiel in ein Mesh backen (Fett/Muskel bleibt Blendshape), Mesh-Kopien sparen
+- [ ] Gesichtsausdrücke/Visemes (Faceunits-Pack) für Dialoge
 - [ ] Bedürfnisse (z. B. Hunger, Schlaf, Energie) und Zuhause
 - [ ] Körper koppeln an Essen, Training und Aktivität
 - [ ] UI: HUD, Inventar, Pausemenü

@@ -91,6 +91,7 @@ def ensure_neutral():
 prox={"Eyes":(f"{UD}/eyes/low-poly/low-poly.mhclo","Eyes"),"Eyebrows":(f"{UD}/eyebrows/eyebrow001/eyebrow001.mhclo","Eyebrows"),
 "Eyelashes":(f"{UD}/eyelashes/eyelashes01/eyelashes01.mhclo","Eyelashes"),"Teeth":(f"{UD}/teeth/teeth_base/teeth_base.mhclo","Teeth"),
 "Underwear_Panties":(f"{UD}/clothes/wolgade_female_panties_01/wolgade_female_panties_01.mhclo","Clothes"),
+"Underwear_Briefs":(f"{UD}/clothes/punkduck_sport_briefs/punkduck_sport_briefs.mhclo","Clothes"),
 "Underwear_Top":(f"{UD}/clothes/wolgade_female_top_01/wolgade_female_top_01.mhclo","Clothes")}
 from bl_ext.user_default.mpfb.entities.clothes.mhclo import Mhclo
 pobjs={}

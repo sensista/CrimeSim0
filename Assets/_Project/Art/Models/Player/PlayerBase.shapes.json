@@ -19,6 +19,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -301,6 +302,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -583,6 +585,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -865,6 +868,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -1147,6 +1151,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -1429,6 +1434,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -1711,6 +1717,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -1993,6 +2000,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -2275,6 +2283,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -2557,6 +2566,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -2836,6 +2846,7 @@
    "proxies": [
     "Eyebrows",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -2905,6 +2916,7 @@
    "proxies": [
     "Eyebrows",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -2953,6 +2965,7 @@
    "displayName": "macro_g05_m05_w0",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -2970,6 +2983,7 @@
    "displayName": "macro_g05_m05_w1",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -2987,6 +3001,7 @@
    "displayName": "macro_g05_m1_w0",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -3065,6 +3080,7 @@
    "displayName": "macro_g05_m1_w05",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -3084,6 +3100,7 @@
     "Eyebrows",
     "Eyelashes",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -3131,6 +3148,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -3413,6 +3431,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -3695,6 +3714,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -3977,6 +3997,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -4259,6 +4280,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -4541,6 +4563,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -4823,6 +4846,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -5105,6 +5129,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -5387,6 +5412,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -5666,6 +5692,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -5945,6 +5972,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -6229,6 +6257,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -6513,6 +6542,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -6797,6 +6827,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -7081,6 +7112,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -7365,6 +7397,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -7644,6 +7677,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -7923,6 +7957,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -8202,6 +8237,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -8481,6 +8517,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -8760,6 +8797,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -9154,6 +9192,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -9412,6 +9451,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -11872,7 +11912,9 @@
    "direction": "positive",
    "pair": "asym-ear-1-l",
    "displayName": "Asymmetrie Ohr 1 rechts",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.48
   },
@@ -12492,7 +12534,8 @@
    "pair": "asym-temple-2-r",
    "displayName": "Asymmetrie Schläfe 2 links",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.77
@@ -12507,7 +12550,8 @@
    "pair": "asym-temple-2-l",
    "displayName": "Asymmetrie Schläfe 2 rechts",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.77
@@ -13178,7 +13222,8 @@
    "pair": "buttocks-volume-incr",
    "displayName": "Gesäß Volumen −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.98
@@ -13193,7 +13238,8 @@
    "pair": "buttocks-volume-decr",
    "displayName": "Gesäß Volumen +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.89
@@ -13442,7 +13488,8 @@
    "pair": "chin-height-incr",
    "displayName": "Kinn Höhe −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.99
@@ -13457,7 +13504,8 @@
    "pair": "chin-height-decr",
    "displayName": "Kinn Höhe +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 2.05
@@ -13525,7 +13573,9 @@
    "direction": "negative",
    "pair": "chin-width-incr",
    "displayName": "Kinn Breite −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.51
   },
@@ -14053,7 +14103,8 @@
    "pair": "r-ear-scale-incr",
    "displayName": "rechts Ohr Größe −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.97
@@ -14068,7 +14119,8 @@
    "pair": "r-ear-scale-decr",
    "displayName": "rechts Ohr Größe +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.0
@@ -14083,7 +14135,8 @@
    "pair": "l-ear-scale-decr",
    "displayName": "links Ohr Größe +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.0
@@ -14098,7 +14151,8 @@
    "pair": "l-ear-scale-incr",
    "displayName": "links Ohr Größe −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.97
@@ -14277,7 +14331,8 @@
    "pair": "eyebrows-trans-backward",
    "displayName": "Augenbrauen Position vor",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.64
@@ -14292,7 +14347,8 @@
    "pair": "eyebrows-trans-forward",
    "displayName": "Augenbrauen Position zurück",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.45
@@ -16083,7 +16139,8 @@
    "pair": "forehead-temple-decr",
    "displayName": "Stirn Schläfe +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.65
@@ -16111,7 +16168,8 @@
    "pair": "forehead-trans-forward",
    "displayName": "Stirn Position zurück",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.5
@@ -16126,7 +16184,8 @@
    "pair": "forehead-trans-backward",
    "displayName": "Stirn Position vor",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.44
@@ -16141,7 +16200,8 @@
    "pair": "forehead-scale-vert-incr",
    "displayName": "Stirn Größe vertikal −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 2.18
@@ -16156,7 +16216,8 @@
    "pair": "forehead-scale-vert-decr",
    "displayName": "Stirn Größe vertikal +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 3.79
@@ -16171,7 +16232,8 @@
    "pair": "forehead-nubian-decr",
    "displayName": "Stirn nubisch +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 4.89
@@ -16186,7 +16248,8 @@
    "pair": "forehead-nubian-incr",
    "displayName": "Stirn nubisch −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 3.7
@@ -17566,7 +17629,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.58
@@ -17584,7 +17648,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 2.51
@@ -17602,7 +17667,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -17626,7 +17692,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -17698,7 +17765,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -17722,7 +17790,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -17743,7 +17812,8 @@
    "pair": "head-fat-decr",
    "displayName": "Kopf Fett +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.12
@@ -17758,7 +17828,8 @@
    "pair": "head-fat-incr",
    "displayName": "Kopf Fett −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.71
@@ -17773,7 +17844,8 @@
    "pair": null,
    "displayName": "Kopf invertedtriangular",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.75
@@ -17788,7 +17860,8 @@
    "pair": null,
    "displayName": "Kopf diamond",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.69
@@ -17803,7 +17876,8 @@
    "pair": null,
    "displayName": "Kopf oval",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.25
@@ -17818,7 +17892,8 @@
    "pair": null,
    "displayName": "Kopf rectangular",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.46
@@ -17881,7 +17956,8 @@
    "pair": "head-back-scale-depth-incr",
    "displayName": "Kopf back Größe Tiefe −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 2.71
@@ -17896,7 +17972,8 @@
    "pair": "head-back-scale-depth-decr",
    "displayName": "Kopf back Größe Tiefe +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 2.98
@@ -17911,7 +17988,8 @@
    "pair": null,
    "displayName": "Kopf rund",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.2
@@ -17928,7 +18006,8 @@
    "proxies": [
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.32
@@ -17945,7 +18024,8 @@
    "proxies": [
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.5
@@ -17963,7 +18043,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -17987,7 +18068,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -18011,7 +18093,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.7
@@ -18029,7 +18112,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.7
@@ -18044,7 +18128,8 @@
    "pair": null,
    "displayName": "Kopf dreieckig",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.32
@@ -18059,7 +18144,8 @@
    "pair": null,
    "displayName": "Kopf eckig",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.06
@@ -18075,6 +18161,7 @@
    "displayName": "Hüfte Position innen",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18112,6 +18199,7 @@
    "displayName": "Hüfte Position außen",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18149,6 +18237,7 @@
    "displayName": "Hüfte Größe horizontal −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18176,6 +18265,7 @@
    "displayName": "Hüfte Größe horizontal +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18203,6 +18293,7 @@
    "displayName": "Hüfte Größe Tiefe −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -18219,6 +18310,7 @@
    "displayName": "Hüfte Größe Tiefe +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -18235,6 +18327,7 @@
    "displayName": "Hüfte Taille runter",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18272,6 +18365,7 @@
    "displayName": "Hüfte Taille hoch",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -18288,6 +18382,7 @@
    "displayName": "Hüfte Position zurück",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18325,6 +18420,7 @@
    "displayName": "Hüfte Position vor",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18362,6 +18458,7 @@
    "displayName": "Hüfte Größe vertikal −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -18378,6 +18475,7 @@
    "displayName": "Hüfte Größe vertikal +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -18394,6 +18492,7 @@
    "displayName": "Hüfte Position hoch",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18431,6 +18530,7 @@
    "displayName": "Hüfte Position runter",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -18593,7 +18693,8 @@
    "pair": "r-upperleg-fat-decr",
    "displayName": "rechts Oberschenkel Fett +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 3.07
@@ -18607,7 +18708,9 @@
    "direction": "negative",
    "pair": "r-upperleg-fat-incr",
    "displayName": "rechts Oberschenkel Fett −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.79
   },
@@ -18621,7 +18724,8 @@
    "pair": "l-upperleg-fat-decr",
    "displayName": "links Oberschenkel Fett +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 3.07
@@ -18635,7 +18739,9 @@
    "direction": "negative",
    "pair": "l-upperleg-fat-incr",
    "displayName": "links Oberschenkel Fett −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.79
   },
@@ -18701,7 +18807,8 @@
    "pair": "r-leg-valgus-decr",
    "displayName": "rechts leg valgus +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "calf_r": [
@@ -18722,7 +18829,8 @@
    "pair": "r-leg-valgus-incr",
    "displayName": "rechts leg valgus −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "calf_r": [
@@ -18743,7 +18851,8 @@
    "pair": "l-leg-valgus-incr",
    "displayName": "links leg valgus −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "calf_l": [
@@ -18764,7 +18873,8 @@
    "pair": "l-leg-valgus-decr",
    "displayName": "links leg valgus +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "calf_l": [
@@ -19015,7 +19125,8 @@
    "pair": "r-upperleg-scale-horiz-decr",
    "displayName": "rechts Oberschenkel Größe horizontal +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "calf_r": [
@@ -19062,7 +19173,8 @@
    "pair": "l-upperleg-scale-horiz-decr",
    "displayName": "links Oberschenkel Größe horizontal +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "calf_l": [
@@ -19109,7 +19221,8 @@
    "pair": "upperlegs-height-incr",
    "displayName": "upperlegs Höhe −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "Root": [
@@ -19456,7 +19569,8 @@
    "pair": "measure-upperleg-height-incr",
    "displayName": "measure Oberschenkel Höhe −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "Root": [
@@ -19506,7 +19620,9 @@
    "direction": "negative",
    "pair": "r-upperleg-muscle-incr",
    "displayName": "rechts Oberschenkel Muskel −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.41
   },
@@ -19545,7 +19661,9 @@
    "direction": "negative",
    "pair": "l-upperleg-muscle-incr",
    "displayName": "links Oberschenkel Muskel −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.41
   },
@@ -19585,7 +19703,8 @@
    "pair": "measure-thigh-circ-decr",
    "displayName": "measure Oberschenkel circ +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 2.12
@@ -19600,7 +19719,8 @@
    "pair": "measure-thigh-circ-incr",
    "displayName": "measure Oberschenkel circ −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.38
@@ -19759,7 +19879,9 @@
    "direction": "negative",
    "pair": "mouth-cupidsbow-incr",
    "displayName": "Mund cupidsbow −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.1
   },
@@ -20142,7 +20264,9 @@
    "direction": "negative",
    "pair": "mouth-upperlip-middle-up",
    "displayName": "Mund Oberlippe middle runter",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.23
   },
@@ -20155,7 +20279,9 @@
    "direction": "positive",
    "pair": "mouth-upperlip-middle-down",
    "displayName": "Mund Oberlippe middle hoch",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.36
   },
@@ -20312,7 +20438,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -20336,7 +20463,8 @@
     "Eyes",
     "Eyebrows",
     "Eyelashes",
-    "Teeth"
+    "Teeth",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {
     "head": [
@@ -20417,7 +20545,8 @@
    "pair": "neck-double-incr",
    "displayName": "Hals double −",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.22
@@ -20432,7 +20561,8 @@
    "pair": "neck-double-decr",
    "displayName": "Hals double +",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.14
@@ -20538,6 +20668,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -20588,7 +20719,8 @@
    "pair": "neck-trans-down",
    "displayName": "Hals Position hoch",
    "proxies": [
-    "Eyebrows"
+    "Eyebrows",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.0
@@ -20604,6 +20736,7 @@
    "displayName": "Hals Position runter",
    "proxies": [
     "Eyebrows",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21191,6 +21324,7 @@
    "displayName": "Wölbung +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21207,6 +21341,7 @@
    "displayName": "Wölbung −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21221,7 +21356,9 @@
    "direction": "negative",
    "pair": "pelvis-tone-incr",
    "displayName": "Becken tone −",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 3.67
   },
@@ -21236,6 +21373,7 @@
    "displayName": "Becken tone +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21252,6 +21390,7 @@
    "displayName": "Bauch Schwanger −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21268,6 +21407,7 @@
    "displayName": "Bauch Schwanger +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21310,6 +21450,7 @@
    "displayName": "Bauch navel hoch",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21326,6 +21467,7 @@
    "displayName": "Bauch navel runter",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21342,6 +21484,7 @@
    "displayName": "Bauch tone −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -21356,7 +21499,9 @@
    "direction": "positive",
    "pair": "stomach-tone-decr",
    "displayName": "Bauch tone +",
-   "proxies": [],
+   "proxies": [
+    "Underwear_Briefs"
+   ],
    "jointOffsets": {},
    "maxDisplacement_cm": 0.85
   },
@@ -21375,6 +21520,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -21596,6 +21742,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -21845,6 +21992,7 @@
    "displayName": "measure underbust circ +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -22084,6 +22232,7 @@
    "displayName": "Oberkörper Größe horizontal −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -22291,6 +22440,7 @@
    "displayName": "Oberkörper Größe Tiefe +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -22323,6 +22473,7 @@
    "displayName": "Oberkörper Größe Tiefe −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -22364,6 +22515,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -22595,6 +22747,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -22821,6 +22974,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -23072,6 +23226,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -23692,7 +23847,8 @@
    "pair": "measure-hips-circ-decr",
    "displayName": "measure hips circ +",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 3.49
@@ -23707,7 +23863,8 @@
    "pair": "measure-hips-circ-incr",
    "displayName": "measure hips circ −",
    "proxies": [
-    "Underwear_Panties"
+    "Underwear_Panties",
+    "Underwear_Briefs"
    ],
    "jointOffsets": {},
    "maxDisplacement_cm": 1.74
@@ -24342,6 +24499,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -24591,6 +24749,7 @@
    "displayName": "measure Taille circ +",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -24607,6 +24766,7 @@
    "displayName": "measure Taille circ −",
    "proxies": [
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {},
@@ -24659,6 +24819,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -24885,6 +25046,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -25138,6 +25300,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -25359,6 +25522,7 @@
     "Eyelashes",
     "Teeth",
     "Underwear_Panties",
+    "Underwear_Briefs",
     "Underwear_Top"
    ],
    "jointOffsets": {
@@ -26388,6 +26552,10 @@
   "Underwear_Panties": {
    "verts": 809,
    "shapeKeys": 125
+  },
+  "Underwear_Briefs": {
+   "verts": 426,
+   "shapeKeys": 153
   },
   "Underwear_Top": {
    "verts": 1167,
