@@ -52,8 +52,8 @@ namespace CrimeSim.EditorTools
 
             var skin = SkinMaterial(femaleTex != null ? femaleTex : LoadModelTex("skin_diffuse.png"));
             var eyes = EyeMaterial();
-            var brows = HairLikeMaterial("Stil_Augenbrauen", LoadModelTex("eyebrow001.png"), new Color(0.22f, 0.15f, 0.11f), 0.3f);
-            var lashes = HairLikeMaterial("Stil_Wimpern", LoadModelTex("eyelashes01.png"), new Color(0.06f, 0.05f, 0.05f), 0.35f);
+            var brows = HairLikeMaterial("Stil_Augenbrauen", LoadModelTex("eyebrow001.png"), new Color(0.38f, 0.27f, 0.2f), 0.5f);
+            var lashes = HairLikeMaterial("Stil_Wimpern", LoadModelTex("eyelashes01.png"), new Color(0.12f, 0.09f, 0.08f), 0.45f);
             var hair = HairLikeMaterial("Stil_Haare", null, new Color(0.25f, 0.16f, 0.1f), 0.4f);
 
             string path = PlayerPrefabBuilder.PrefabPath;
@@ -263,6 +263,8 @@ namespace CrimeSim.EditorTools
             var camData = cam.GetUniversalAdditionalCameraData();
             camData.renderPostProcessing = true;
             camData.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
+            camData.antialiasingQuality = AntialiasingQuality.High;
+            cam.allowMSAA = true;
             camGo.transform.position = new Vector3(0f, 1f, 3.5f);
             camGo.transform.rotation = Quaternion.Euler(5f, 180f, 0f);
             var orbit = camGo.AddComponent<CreatorOrbitCamera>();

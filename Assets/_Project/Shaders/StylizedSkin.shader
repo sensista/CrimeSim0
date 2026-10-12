@@ -15,10 +15,11 @@ Shader "CrimeSim/StylizedSkin"
         _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.45
         _RampCenter ("Schattengrenze", Range(0, 1)) = 0.42
         _RampSoftness ("Weichheit Schattengrenze", Range(0.01, 0.5)) = 0.22
-        _RampBlend ("Gemalte Stufe (0 weich, 1 hart)", Range(0, 1)) = 0.45
-        _ShadowTint ("Schattenfarbe", Color) = (0.62, 0.42, 0.42, 1)
+        _RampBlend ("Gemalte Stufe (0 weich, 1 hart)", Range(0, 1)) = 0.3
+        _ShadowTint ("Schattenfarbe", Color) = (0.6, 0.48, 0.5, 1)
         _SSSColor ("Durchschein-Farbe (SSS)", Color) = (0.9, 0.35, 0.25, 1)
-        _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.35
+        _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.2
+        _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.85
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
         _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.06
 
@@ -29,7 +30,7 @@ Shader "CrimeSim/StylizedSkin"
 
         [Header(Glanz und Randlicht)]
         _Smoothness ("Glätte", Range(0, 1)) = 0.45
-        _SpecularStrength ("Glanzlicht", Range(0, 1)) = 0.08
+        _SpecularStrength ("Glanzlicht", Range(0, 1)) = 0.12
         _RimColor ("Randlicht-Farbe", Color) = (1, 0.82, 0.7, 1)
         _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.12
         _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 5
@@ -64,6 +65,7 @@ Shader "CrimeSim/StylizedSkin"
             half4 _SSSColor;
             half _SSSStrength;
             half _AmbientStrength;
+            half _Saturation;
             half _ShadowLift;
             half4 _BlushColor;
             half _BlushStrength;
@@ -132,7 +134,7 @@ Shader "CrimeSim/StylizedSkin"
                 half3 albedo = tex.rgb * lerp(1.0h.xxx, toneRatio, _ToneStrength);
                 half blush = SAMPLE_TEXTURE2D(_BlushMask, sampler_BlushMask, i.uv).r * _BlushStrength;
                 albedo = lerp(albedo, albedo * _BlushColor.rgb * 1.4h, blush);
-                albedo = saturate(albedo);
+                albedo = saturate(lerp(dot(albedo, half3(0.3h, 0.59h, 0.11h)).xxx, albedo, _Saturation));
 
                 half3 n = normalize(i.normalWS);
             #if defined(_NORMALMAP)

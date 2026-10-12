@@ -58,6 +58,11 @@ namespace CrimeSim.EditorTools
             cam.backgroundColor = new Color(0.12f, 0.13f, 0.16f);
             cam.fieldOfView = 40f;
             camGo.AddComponent<AudioListener>();
+            cam.allowMSAA = true;
+            var camData = UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(cam);
+            camData.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.SubpixelMorphologicalAntiAliasing;
+            camData.antialiasingQuality = UnityEngine.Rendering.Universal.AntialiasingQuality.High;
+            camData.renderPostProcessing = true;
             camGo.transform.position = new Vector3(0f, 1f, 3.5f);
             camGo.transform.rotation = Quaternion.Euler(5f, 180f, 0f);
             var orbit = camGo.AddComponent<CrimeSim.CreatorOrbitCamera>();

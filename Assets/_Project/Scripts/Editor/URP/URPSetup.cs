@@ -46,6 +46,10 @@ namespace CrimeSim.EditorTools
                 AssetDatabase.CreateAsset(pipeline, AssetPath);
                 createdPipeline = true;
             }
+            // Kantenglättung: volle Auflösung + 4x MSAA
+            pipeline.renderScale = 1f;
+            pipeline.msaaSampleCount = 4;
+            EditorUtility.SetDirty(pipeline);
             AssetDatabase.SaveAssets();
 
             // Graphics Settings
