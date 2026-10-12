@@ -95,7 +95,6 @@ namespace CrimeSim.EditorTools
             mi.importBlendShapeNormals = ModelImporterNormals.Calculate;
             mi.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
             mi.normalSmoothingAngle = 180f;
-            mi.legacyBlendShapeNormals = false;
             mi.importTangents = ModelImporterTangents.CalculateMikk;
             mi.skinWeights = ModelImporterSkinWeights.Standard; // 4 Einflüsse pro Vertex
             mi.optimizeMeshVertices = true;
