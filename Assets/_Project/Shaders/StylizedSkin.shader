@@ -66,9 +66,9 @@ Shader "CrimeSim/StylizedSkin"
         _CavityStrength ("Kavität-Tönung", Range(0, 1)) = 0.4
         _CavityColor ("Kavität-Farbe", Color) = (0.62, 0.38, 0.36, 1)
         _LipColor ("Lippen-Farbe", Color) = (0.86, 0.62, 0.6, 1)
-        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.35
-        _LipBorder ("Lippenrand dunkler", Range(0, 1)) = 0.35
-        _LipGloss ("Lippen-Glanz", Range(0, 3)) = 0.4
+        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.3
+        _LipBorder ("(ungenutzt) Lippenrand", Range(0, 1)) = 0
+        _LipGloss ("Lippen-Glanz", Range(0, 3)) = 0.15
 
         [Header(Kleidung)]
         _HideMask ("Körper ausblenden (R Höschen, G Top, B Slip)", Vector) = (0, 0, 0, 0)
@@ -177,6 +177,7 @@ Shader "CrimeSim/StylizedSkin"
                 half NdotL = dot(s.normalWS, light.direction);
                 half sh = lerp(1.0h, light.shadowAttenuation, _ShadowStrength);
                 sh = lerp(sh, 1.0h, saturate(1.0h - abs(NdotL) * 3.0h) * 0.25h); // nur Schatten-Akne am Terminator dämpfen
+                sh = lerp(sh, 1.0h, saturate(gLip * 1.5h) * 0.85h); // Lippenspalt: keine gezackte Eigenschatten-Linie (Shadowmap-Akne in der Falte)
                 half w = saturate((NdotL + _Wrap) / (1.0h + _Wrap)) * sh;
                 half lit = SmoothRamp(w);
 
@@ -236,9 +237,8 @@ Shader "CrimeSim/StylizedSkin"
                 half cav = saturate((0.5h - det.r) * 2.0h);
                 albedo *= lerp(1.0h.xxx, _CavityColor.rgb, cav * _CavityStrength);
                 gLip = det.g;
-                albedo = lerp(albedo, albedo * _LipColor.rgb * 1.2h, det.g * _LipStrength);
-                half border = saturate(det.g * (1.0h - det.g) * 4.0h);
-                albedo *= 1.0h - border * _LipBorder * 0.5h;
+                // Lippen: nur weicher, breit verlaufender Farbton (G = stark weichgezeichnete Lippenregion), keine Kontur
+                albedo = lerp(albedo, albedo * _LipColor.rgb * 1.1h, det.g * _LipStrength);
                 half lum = dot(albedo, half3(0.3h, 0.59h, 0.11h));
                 albedo = saturate(lerp(lum.xxx, albedo, _Saturation));
                 gThin = SAMPLE_TEXTURE2D(_ThicknessMap, sampler_ThicknessMap, i.uv).r;

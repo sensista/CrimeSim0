@@ -18,8 +18,6 @@
  "nose-volume-decr-incr": -0.15,
  "eyebrows-trans-backward-forward": -0.3,
  "forehead-trans-backward-forward": -0.15,
- "mouth-cupidsbow-decr-incr": 0.3,
- "mouth-upperlip-volume-decr-incr": -0.05,
  "neck-scale-horiz-decr-incr": -0.35,
  "neck-scale-depth-decr-incr": -0.2,
  "neck-scale-vert-decr-incr": 0.15,
@@ -36,14 +34,11 @@
  "nose-nostrils-width-decr-incr": -0.3,
  "nose-scale-vert-decr-incr": -0.1,
  "nose-point-down-up": 0.15,
- "mouth-angles-down-up": 0.15,
  "mouth-laugh-lines-in-out": -0.3,
  "eyebrows-trans-down-up": 0.1,
  "eyebrows-angle-down-up": 0.15,
  "head-scale-horiz-decr-incr": -0.08,
  "head-invertedtriangular": 0.25,
  "head-fat-decr-incr": -0.2,
- "head-age-decr-incr": -0.15,
- "mouth-lowerlip-volume-decr-incr": -0.15,
- "mouth-scale-horiz-decr-incr": -0.05
+ "head-age-decr-incr": -0.15
 }

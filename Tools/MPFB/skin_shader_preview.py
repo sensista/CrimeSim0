@@ -48,7 +48,7 @@ for sh in man["shapes"]:
     if sh.get("type")!="modifier": continue
     n=sh["name"]; side="l-" if n.startswith("l-") else "r-" if n.startswith("r-") else ""
     SL.setdefault(side+sh["slider"],{})[sh.get("direction","positive")]=n
-base_def={"l-eye-scale-decr-incr":0.3,"r-eye-scale-decr-incr":0.3,"mouth-upperlip-volume-decr-incr":0.0,"mouth-lowerlip-volume-decr-incr":0.0}
+base_def={"l-eye-scale-decr-incr":0.3,"r-eye-scale-decr-incr":0.3,"mouth-upperlip-volume-decr-incr":-0.3,"mouth-lowerlip-volume-decr-incr":-0.35,"mouth-scale-horiz-decr-incr":-0.15,"mouth-scale-vert-decr-incr":-0.15,"mouth-angles-down-up":0.2,"mouth-cupidsbow-decr-incr":0.3}
 fem=json.load(open("/workspace/CrimeSim0/Tools/MPFB/female_face_defaults.json"))
 keys={"macro_g0_m05_w05":1.0}
 for k in set(base_def)|set(fem):
@@ -117,9 +117,7 @@ def mat(P,tone):
     dt=sep(tex("det"))
     cav=math_('MAXIMUM',math_('MULTIPLY',math_('SUBTRACT',0.5,dt[0]),2.0),0.0)
     alb=mix(alb,mix(alb,(0.62,0.38,0.36,1),1.0,'MULTIPLY'),math_('MULTIPLY',cav,0.4))
-    alb=mix(alb,mix(alb,(0.99,0.71,0.68,1),1.0,"MULTIPLY"),math_("MULTIPLY",dt[1],0.35))
-    brd=math_('MULTIPLY',math_('MULTIPLY',dt[1],math_('SUBTRACT',1.0,dt[1])),4.0)
-    alb=mix(alb,mix(alb,(0.82,0.82,0.82,1),1.0,'MULTIPLY'),brd)
+    alb=mix(alb,mix(alb,(0.95,0.68,0.66,1),1.0,"MULTIPLY"),math_("MULTIPLY",dt[1],0.3))
     nm=N.new('ShaderNodeNormalMap'); nm.inputs[0].default_value=0.8; L.new(tex("nrm"),nm.inputs[1])
     d=N.new('ShaderNodeBsdfDiffuse'); d.inputs[0].default_value=(1,1,1,1)
     L.new(nm.outputs[0],d.inputs['Normal'])

@@ -65,6 +65,9 @@ namespace CrimeSim.EditorTools
                 foreach (var r in root.GetComponentsInChildren<Renderer>(true))
                 {
                     string n = r.name.ToLowerInvariant();
+                    // Mund ist geschlossen und es gibt noch keine Sprech-Animation: Zähne/Zahnfleisch ausblenden,
+                    // sonst scheinen sie als graue, gezackte Linie durch den Lippenspalt.
+                    if (n == "teeth") { r.enabled = false; continue; }
                     Material m = null;
                     if (n == "body") m = skin;
                     else if (n == "eyes" || n.StartsWith("eye") && !n.Contains("brow") && !n.Contains("lash")) m = eyes;

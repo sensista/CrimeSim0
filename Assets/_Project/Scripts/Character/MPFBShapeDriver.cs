@@ -107,8 +107,13 @@ namespace CrimeSim
                 case "proportions": case "cupsize": case "firmness": return 0.5f;
                 // Stil-Standard: etwas größere Augen, vollere, geschlossene Lippen
                 case "l-eye-scale-decr-incr": case "r-eye-scale-decr-incr": return 0.3f;
-                case "mouth-upperlip-volume-decr-incr": return 0f;
-                case "mouth-lowerlip-volume-decr-incr": return 0f;
+                // Lippen natürlich: schmaler, weniger breit, Mundwinkel leicht hoch, dezenter Amorbogen
+                case "mouth-upperlip-volume-decr-incr": return -0.3f;
+                case "mouth-lowerlip-volume-decr-incr": return -0.35f;
+                case "mouth-scale-horiz-decr-incr": return -0.15f;
+                case "mouth-scale-vert-decr-incr": return -0.15f;
+                case "mouth-angles-down-up": return 0.2f;
+                case "mouth-cupidsbow-decr-incr": return 0.3f;
                 default: return 0f;
             }
         }
@@ -141,8 +146,6 @@ namespace CrimeSim
                 case "nose-volume-decr-incr": return -0.15f;
                 case "eyebrows-trans-backward-forward": return -0.3f;
                 case "forehead-trans-backward-forward": return -0.15f;
-                case "mouth-cupidsbow-decr-incr": return 0.3f;
-                case "mouth-upperlip-volume-decr-incr": return -0.05f;
                 case "neck-scale-horiz-decr-incr": return -0.35f;
                 case "neck-scale-depth-decr-incr": return -0.2f;
                 case "neck-scale-vert-decr-incr": return 0.15f;
@@ -159,7 +162,6 @@ namespace CrimeSim
                 case "nose-nostrils-width-decr-incr": return -0.3f;
                 case "nose-scale-vert-decr-incr": return -0.1f;
                 case "nose-point-down-up": return 0.15f;
-                case "mouth-angles-down-up": return 0.15f;
                 case "mouth-laugh-lines-in-out": return -0.3f;
                 case "eyebrows-trans-down-up": return 0.1f;
                 case "eyebrows-angle-down-up": return 0.15f;
@@ -167,8 +169,6 @@ namespace CrimeSim
                 case "head-invertedtriangular": return 0.25f;
                 case "head-fat-decr-incr": return -0.2f;
                 case "head-age-decr-incr": return -0.15f;
-                case "mouth-lowerlip-volume-decr-incr": return -0.15f;
-                case "mouth-scale-horiz-decr-incr": return -0.05f;
                 default: return 0f;
             }
         }
