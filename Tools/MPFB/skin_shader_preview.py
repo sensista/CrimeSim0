@@ -72,7 +72,7 @@ def mat(P,tone):
     def sep(c):
         n=N.new('ShaderNodeSeparateColor'); L.new(c,n.inputs[0]); return n.outputs
     ref=(0.87,0.69,0.55); ratio=tuple((tone[i]/ref[i])**2.2 for i in range(3))+(1,)  # Unity: Farben im Linear-Raum
-    alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.92,0.88,1),1.0,'MULTIPLY')
+    alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.9,0.82,1),1.0,'MULTIPLY')
     VS=min(0.6*(0.5+1.4*P),1.0)
     v=sep(tex("var"))
     alb=mix(alb,(1.0,0.72,0.68,1),math_('MULTIPLY',v[0],VS),'MULTIPLY')
@@ -85,14 +85,14 @@ def mat(P,tone):
     # Pinsel auf Farbe (warm): albedo*(1+bc*(1,.75,.55))
     cc=N.new('ShaderNodeCombineColor'); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.35*P)),cc.inputs[0]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.28*P)),cc.inputs[1]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.2*P)),cc.inputs[2])
     alb=mix(alb,cc.outputs[0],1.0,'MULTIPLY')
-    alb=mix(alb,(0.95*1.35,0.5*1.35,0.48*1.35,1),math_('MULTIPLY',sep(tex("blush"))[0],0.4),'MULTIPLY') if False else mix(alb,mix(alb,(1.28,0.68,0.65,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("blush"))[0],0.4))
+    alb=mix(alb,(0.95*1.35,0.5*1.35,0.48*1.35,1),math_('MULTIPLY',sep(tex("blush"))[0],0.4),'MULTIPLY') if False else mix(alb,mix(alb,(1.28,0.68,0.65,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("blush"))[0],0.55))
     ao=sep(tex("ao"))[0]
     alb=mix(alb,mix((0.66,0.4,0.38,1),(1,1,1,1),ao),0.6,'MULTIPLY')
     # Licht: weißes Diffuse -> Shader to RGB -> Helligkeit
     dt=sep(tex("det"))
     cav=math_('MAXIMUM',math_('MULTIPLY',math_('SUBTRACT',0.5,dt[0]),2.0),0.0)
     alb=mix(alb,mix(alb,(0.62,0.38,0.36,1),1.0,'MULTIPLY'),math_('MULTIPLY',cav,0.6))
-    alb=mix(alb,mix(alb,(1.08,0.66,0.62,1),1.0,'MULTIPLY'),math_('MULTIPLY',dt[1],0.5))
+    alb=mix(alb,mix(alb,(1.08,0.66,0.62,1),1.0,'MULTIPLY'),math_('MULTIPLY',dt[1],0.7))
     brd=math_('MULTIPLY',math_('MULTIPLY',dt[1],math_('SUBTRACT',1.0,dt[1])),4.0)
     alb=mix(alb,mix(alb,(0.82,0.82,0.82,1),1.0,'MULTIPLY'),brd)
     nm=N.new('ShaderNodeNormalMap'); nm.inputs[0].default_value=0.8; L.new(tex("nrm"),nm.inputs[1])
@@ -125,21 +125,22 @@ def mat(P,tone):
     # Gegenlicht dünne Stellen (vereinfacht: konstanter warmer Zusatz)
     col=mix(col,mix(alb,(1.0,0.4,0.3,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("thick"))[0],0.15),'ADD')
     # Mitteltöne entsättigen
-    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.0  # = Unity _Saturation
+    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1.1  # = Unity _Saturation
     col=hsv.outputs[0]
     # Randlicht
     fr_=N.new('ShaderNodeLayerWeight'); fr_.inputs[0].default_value=0.12
-    col=mix(col,mix(alb,(1,0.82,0.7,1),1.0,'MULTIPLY'),math_('MULTIPLY',fr_.outputs['Facing'],0.15),'ADD')
-    e=N.new('ShaderNodeEmission'); L.new(col,e.inputs[0]); e.inputs[1].default_value=1.0
+    col=mix(col,mix(alb,(1,0.82,0.7,1),1.0,'MULTIPLY'),math_('MULTIPLY',math_('MULTIPLY',fr_.outputs['Facing'],0.08),math_('MINIMUM',math_('ADD',0.2,math_('ADD',math_('MULTIPLY',sep(tex("thick"))[0],1.5),v[0])),1.0)),'ADD')
+    e=N.new('ShaderNodeEmission'); L.new(col,e.inputs[0]); e.inputs[1].default_value=0.96  # Energie: 1-F0 (~4%) geht in den Glanz
     # dezentes gemaltes Glanzlicht
     g=N.new('ShaderNodeBsdfGlossy'); L.new(nm.outputs[0],g.inputs['Normal']); g.inputs['Roughness'].default_value=0.45
     ad=N.new('ShaderNodeAddShader'); L.new(e.outputs[0],ad.inputs[0])
-    g.inputs['Roughness'].default_value=0.4; g.distribution='GGX'
+    g.inputs['Roughness'].default_value=0.5; g.distribution='GGX'
     fz=N.new('ShaderNodeFresnel'); fz.inputs[0].default_value=1.4
     gw=math_('ADD',0.35,math_('MULTIPLY',fz.outputs[0],4.0))
     gs=N.new('ShaderNodeMixShader'); L.new(gw,gs.inputs[0]); gs.inputs[0].default_value=0
     ad2=N.new('ShaderNodeAddShader'); L.new(e.outputs[0],ad2.inputs[0])
-    gc=N.new('ShaderNodeMath'); gc.operation='MULTIPLY'; L.new(gw,gc.inputs[0]); gc.inputs[1].default_value=0.12
+    gc=N.new('ShaderNodeMath'); gc.operation='MULTIPLY'; L.new(gw,gc.inputs[0]); gc.inputs[1].default_value=0.0
+    gz=math_('ADD',0.45,math_('MULTIPLY',sep(tex("det"))[2],0.85)); L.new(math_('MULTIPLY',gz,0.07),gc.inputs[1])
     g.inputs['Color'].default_value=(1,1,1,1)
     sc_=N.new('ShaderNodeMixShader'); L.new(gc.outputs[0],sc_.inputs[0]); tr=N.new('ShaderNodeBsdfTransparent'); L.new(tr.outputs[0],sc_.inputs[1]); L.new(g.outputs[0],sc_.inputs[2])
     # Transparent als 'nichts': Glanz additiv über Add-Shader
@@ -161,6 +162,11 @@ def rig(name):
         L_("key",'AREA',(1,0.82,0.62),160,(-0.9,-1.3,top+0.25),(78,0,-35),0.9)
         L_("fill",'AREA',(0.6,0.7,1.0),25,(1.2,-0.8,1.6),(70,0,50),1.5)
         L_("rim",'AREA',(1,0.72,0.5),140,(0.6,0.9,1.9),(-60,0,150),0.8)
+    elif name=="neutral":  # Neutral: Key/Fill/Rim, grauer Hintergrund
+        bg.inputs[0].default_value=(0.18,0.18,0.18,1)
+        L_("key",'AREA',(1,1,1),120,(-0.9,-1.2,top+0.2),(75,0,-35),1.0)
+        L_("fill",'AREA',(1,1,1),35,(1.1,-0.9,top-0.1),(80,0,50),1.5)
+        L_("rim",'AREA',(1,1,1),90,(0.5,0.9,top+0.1),(-70,0,150),0.8)
     elif name=="day":   # Sonne + blauer Himmel
         bg.inputs[0].default_value=(0.35,0.45,0.65,1)
         o=L_("sun",'SUN',(1,0.96,0.9),4.0,(0,0,5),(50,0,-30)); o.data.angle=math.radians(1.5)
@@ -171,12 +177,12 @@ def rig(name):
         L_("sodium",'POINT',(1.0,0.6,0.25),40,(0.3,-0.8,top+1.2),(0,0,0))
     elif name=="interior":  # warme Stehlampe + schwaches Fenster
         bg.inputs[0].default_value=(0.015,0.012,0.01,1)
-        L_("lamp",'POINT',(1.0,0.65,0.35),60,(0.7,-0.7,top-0.05),(0,0,0))
+        o=L_("lamp",'POINT',(1.0,0.65,0.35),90,(-0.8,-0.9,top+0.1),(0,0,0)); o.data.shadow_soft_size=0.35  # Lampenschirm: weich, vorne links
         L_("window",'AREA',(0.7,0.8,1.0),30,(-1.5,0.2,top),(90,0,-90),1.5)
-rig("studio")
+rig("interior")
 def shoot(path,profile):
-    if profile: cam.location=(-1.35,-0.02,top-0.2); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
-    else: cam.location=(0,-1.35,top-0.2); cam.rotation_euler=(math.radians(90),0,0)
+    if profile: cam.location=(-1.0,-0.02,top-0.17); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
+    else: cam.location=(0,-1.0,top-0.17); cam.rotation_euler=(math.radians(90),0,0)
     sc.render.filepath=path; bpy.ops.render.render(write_still=True)
 TONES={"vlight":(0.98,0.86,0.78),"medium":(0.8,0.6,0.46),"darkbrown":(0.4,0.25,0.16),"vdark":(0.2,0.12,0.08)}
 MED=(0.87,0.69,0.55)
@@ -185,7 +191,7 @@ for P,tone,tag,prof in jobs:
     m=mat(P,tone); body.data.materials.clear(); body.data.materials.append(m)
     shoot(f"{OUT}/{tag}_front.png",False)
     if prof: shoot(f"{OUT}/{tag}_side.png",True)
-for r in ("day","neon","interior"):
+for r in ("neutral","day","neon","interior"):
     rig(r); shoot(f"{OUT}/light_{r}.png",False)
 jobs=[]
 for P,tone,tag,prof in jobs:

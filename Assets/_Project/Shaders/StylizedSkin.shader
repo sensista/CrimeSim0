@@ -14,8 +14,8 @@ Shader "CrimeSim/StylizedSkin"
         [MainColor] _BaseColor ("Hautfarbe (Creator)", Color) = (0.87, 0.69, 0.55, 1)
         _ToneReference ("Referenz-Hautfarbe der Textur", Color) = (0.87, 0.69, 0.55, 1)
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
-        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.92, 0.88, 1)
-        _Saturation ("Hautsättigung", Range(0, 1.5)) = 1.0
+        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.9, 0.82, 1)
+        _Saturation ("Hautsättigung", Range(0, 1.5)) = 1.1
 
         [Header(Gemalte Lichtbaender)]
         _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.5
@@ -44,7 +44,7 @@ Shader "CrimeSim/StylizedSkin"
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
         _BlushColor ("Rouge-Farbe", Color) = (0.95, 0.5, 0.48, 1)
-        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.4
+        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.55
 
         [Header(Gegenlicht duenne Stellen)]
         [NoScaleOffset] _ThicknessMap ("Dünne Stellen (hell = dünn)", 2D) = "black" {}
@@ -52,21 +52,21 @@ Shader "CrimeSim/StylizedSkin"
         _TransStrength ("Durchschein-Stärke", Range(0, 2)) = 0.8
 
         [Header(Gemaltes Glanzlicht und Rand)]
-        _Smoothness ("Glätte (breiter GGX-Glanz)", Range(0, 1)) = 0.6
-        _SpecStrength ("Glanz-Stärke", Range(0, 3)) = 1.0
+        _Smoothness ("Glätte (breiter GGX-Glanz)", Range(0, 1)) = 0.5
+        _SpecStrength ("Glanz-Stärke", Range(0, 3)) = 0.6
         _SheenStrength ("Fresnel-Schimmer (Umgebung)", Range(0, 1)) = 0.35
         _RimColor ("Randlicht-Farbe", Color) = (1, 0.82, 0.7, 1)
-        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.3
+        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.15
         _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 4
 
         [Header(Normal Map)]
         [Normal][NoScaleOffset] _BumpMap ("Normal Map", 2D) = "bump" {}
         _BumpScale ("Normal-Stärke (Form-Details)", Range(0, 2)) = 0.8
-        [NoScaleOffset] _DetailMap ("Details (R Kavität, G Lippen)", 2D) = "gray" {}
+        [NoScaleOffset] _DetailMap ("Details (R Kavität, G Lippen, B Glanz-Zonen)", 2D) = "gray" {}
         _CavityStrength ("Kavität-Tönung", Range(0, 1)) = 0.6
         _CavityColor ("Kavität-Farbe", Color) = (0.62, 0.38, 0.36, 1)
         _LipColor ("Lippen-Farbe", Color) = (0.9, 0.55, 0.52, 1)
-        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.5
+        _LipStrength ("Lippen-Stärke", Range(0, 1)) = 0.7
         _LipBorder ("Lippenrand dunkler", Range(0, 1)) = 0.35
         _LipGloss ("Lippen-Glanz", Range(0, 3)) = 1.2
 
@@ -166,6 +166,8 @@ Shader "CrimeSim/StylizedSkin"
             // Pro Pixel gesetzt, in CSShadeLight benutzt
             static half gThin;
             static half gLip;
+            static half gGloss;
+            static half gRed;
 
             // Glatte, weiche Licht-Rampe (kein Rauschen, keine Stufen)
             half SmoothRamp(half x) { return smoothstep(0.0h, 1.0h, x) * 0.6h + x * 0.4h; }
@@ -188,14 +190,14 @@ Shader "CrimeSim/StylizedSkin"
                 // Gemaltes, weiches Glanzlicht
                 half3 h = SafeNormalize(light.direction + s.viewDirWS);
                 // Breiter, weicher GGX-Glanz (Haut F0 ~0.028) mit Schlick-Fresnel
-                float rough = max(1.0 - _Smoothness, 0.08);
+                float rough = max(1.0 - _Smoothness * lerp(0.7h, 1.2h, gGloss), 0.08); // Glanz-Zonen: Stirn/Nase/Lippen glatter, Wangen/Kinn/Hals matter
                 float a2 = rough * rough * rough * rough;
                 float NdotH = saturate(dot(s.normalWS, h));
                 float dd = NdotH * NdotH * (a2 - 1.0) + 1.0;
                 float D = a2 / (PI * dd * dd);
                 half F = 0.028h + 0.972h * pow(1.0h - saturate(dot(light.direction, h)), 5.0h);
-                half spec = (half)(D * 0.25) * F * saturate(NdotL) * sh * _SpecStrength * (1.0h + gLip * _LipGloss);
-                col += spec.xxx;
+                half spec = (half)(D * 0.25) * F * saturate(NdotL) * sh * _SpecStrength * lerp(0.45h, 1.3h, gGloss) * (1.0h + gLip * _LipGloss);
+                col = col * (1.0h - F) + spec.xxx; // Energieerhaltung: reflektierter Anteil fehlt im Diffus
 
                 // Gegenlicht an dünnen Stellen
                 half back = pow(saturate(dot(s.viewDirWS, -light.direction)), 3.0h);
@@ -220,6 +222,7 @@ Shader "CrimeSim/StylizedSkin"
                 albedo *= lerp(1.0h.xxx, _RedTint.rgb, v.r);
                 albedo *= lerp(1.0h.xxx, _YellowTint.rgb, v.g);
                 albedo *= lerp(1.0h.xxx, _CoolTint.rgb, v.b);
+                gRed = v.r;
 
 
                 half blush = SAMPLE_TEXTURE2D(_BlushMask, sampler_BlushMask, i.uv).r * _BlushStrength;
@@ -228,7 +231,8 @@ Shader "CrimeSim/StylizedSkin"
                 albedo *= lerp(1.0h.xxx, lerp(_AOColor.rgb, 1.0h.xxx, ao), _AOStrength);
 
                 // Form-Details: Kavität (weich, warm) + Lippen mit dunklerem Rand
-                half2 det = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap, i.uv).rg;
+                half3 det = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap, i.uv).rgb;
+                gGloss = det.b;
                 half cav = saturate((0.5h - det.r) * 2.0h);
                 albedo *= lerp(1.0h.xxx, _CavityColor.rgb, cav * _CavityStrength);
                 gLip = det.g;
@@ -258,7 +262,7 @@ Shader "CrimeSim/StylizedSkin"
                 color = max(color, albedo * shadowCol * _ShadowLift);
 
                 half NdotV = saturate(dot(n, s.viewDirWS));
-                color += pow(1.0h - NdotV, _RimPower) * _RimStrength * _RimColor.rgb * albedo;
+                color += pow(1.0h - NdotV, _RimPower) * _RimStrength * _RimColor.rgb * albedo * saturate(0.2h + gThin * 1.5h + gRed); // nur Ohren/Nase/Wangenränder
                 // Glatter Fresnel-Schimmer aus der Umgebung (glänzende, weiche Haut)
                 half fr = 0.028h + 0.972h * pow(1.0h - NdotV, 5.0h);
                 color += SampleSH(reflect(-s.viewDirWS, n)) * fr * _SheenStrength * _Smoothness;

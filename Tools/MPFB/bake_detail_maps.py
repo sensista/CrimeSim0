@@ -9,6 +9,12 @@ OUT=sys.argv[-2]; VAR=sys.argv[-1]; RES=2048; STRENGTH=3.0  # VAR = female | mal
 bpy.ops.wm.open_mainfile(filepath="/workspace/mpfb_player/out/PlayerBase.blend")
 sc=bpy.context.scene; sc.render.engine='CYCLES'; sc.cycles.samples=4; sc.cycles.device='CPU'
 low=bpy.data.objects["Body"]
+import sys as _s; _s.path.insert(0,"/workspace/CrimeSim0/Tools/MPFB"); import anatomy as A
+_eo=bpy.data.objects.get("Eyes")
+_ev=np.array([_eo.matrix_world@v.co for v in _eo.data.vertices]) if _eo else None
+EYES=[_ev[_ev[:,0]<0].mean(0),_ev[_ev[:,0]>0].mean(0)] if _eo else None
+RIG=bpy.data.objects.get("PlayerRig")
+CLAV=A.clavicle_landmarks(RIG)
 for o in list(bpy.data.objects):
     if o!=low and o.type=='MESH': bpy.data.objects.remove(o)
 # Arbeitskopie ohne Shape Keys / Armature
@@ -65,7 +71,14 @@ d=np.clip(d,-0.004,0.004)
 d=smooth(np.repeat(d[:,None],3,1),4)[:,0]   # weich
 # Kopf/Hals/Schlüsselbein-Zone etwas stärker
 zt=co[:,2].max(); zone=np.clip((co[:,2]-(zt-0.42))/0.06,0,1)
-hi_co=co+nr*(d*(STRENGTH*(1+0.3*zone)))[:,None]                    # betonen
+# Gezielte anatomische Details (glatt): Gesicht + Hals + Schlüsselbeine (Morph ist schon im Mesh, hier nur Schärfe)
+S=A.Surf(co,nr)
+bd,notch=A.body_offsets(co,nr,CLAV,S,0.5,1.0)
+fd=A.face_offsets(co,nr,S,474,523,EYES,notch,1.4)
+print("TARGETED mm",bd.min()*1000,bd.max()*1000,fd.min()*1000,fd.max()*1000)
+d=d*STRENGTH+bd+fd
+hi_co=co+nr*d[:,None]
+d=d/STRENGTH  # für Kavität                    # betonen
 me.vertices.foreach_set("co",hi_co.ravel()); me.update()
 # Kavität + Lippenmaske als Vertex-Farbe
 cav=np.clip(0.5+d/0.004*0.5*STRENGTH/1.6,0,1)
@@ -77,7 +90,10 @@ q=(rel[:,0]/0.03)**2+(rel[:,2]/0.017)**2+(np.clip(-rel[:,1]-0.0,0,None)*0+ (np.c
 lip=np.clip(1.0-q,0,1)
 lip=smooth(np.repeat(lip[:,None],3,1),3)[:,0]
 ca=me.color_attributes.new("det",'FLOAT_COLOR','POINT')
-col=np.stack([cav,np.clip(lip*1.6,0,1),np.zeros(n),np.ones(n)],1)
+GL,RED,WARM,COOL=A.face_zones(co,nr,474,523,EYES)
+col=np.stack([cav,np.clip(lip*1.6,0,1),GL,np.ones(n)],1)   # B = Glanz-Zonen (Glätte)
+cv=me.color_attributes.new("var",'FLOAT_COLOR','POINT')
+cv.data.foreach_set("color",np.stack([RED,WARM,COOL,np.ones(n)],1).ravel())
 ca.data.foreach_set("color",col.ravel())
 # Material für Bake
 def setup(o,img):
@@ -99,4 +115,10 @@ img_n.filepath_raw=OUT+f"/skin_normal_{VAR}.png"; img_n.file_format='PNG'; img_n
 ml.node_tree.nodes.active.image=img_d
 bpy.ops.object.bake(type='EMIT')
 img_d.filepath_raw=OUT+f"/skin_detail_{VAR}.png"; img_d.file_format='PNG'; img_d.save()
+# Gemalte Farbzonen (R rosig, G warm, B neutral/kühl) -> skin_variation_{VAR}.png
+a.attribute_name="var"
+img_v=bpy.data.images.new("v",RES,RES); img_v.colorspace_settings.name='Non-Color'
+ml.node_tree.nodes.active.image=img_v
+bpy.ops.object.bake(type='EMIT')
+img_v.filepath_raw=OUT+f"/skin_variation_{VAR}.png"; img_v.file_format='PNG'; img_v.save()
 print("DETAIL DONE")

@@ -102,3 +102,9 @@ So testest du den Look:
 4. Danach **CrimeSim → Character Creator Szene erstellen** erneut ausführen, damit auch der Creator den neuen Look hat.
 
 Werte wie Wrap, Schattengrenze, Rouge oder Randlicht lassen sich direkt am Material `Stil_Haut` einstellen.
+
+### Haut-Pipeline neu bauen (Blender 4.2, headless)
+1. `blender -b --python Tools/MPFB/build_player.py` (nur wenn sich das Basis-Mesh ändern soll)
+2. `blender -b --python Tools/MPFB/add_anatomy_morph.py` – Schlüsselbeine/Drosselgrube ins Mesh, exportiert `PlayerBase.fbx` neu (nach `Assets/_Project/Art/Models/Player/` kopieren)
+3. `blender -b --python Tools/MPFB/bake_detail_maps.py -- <Texturordner> female` und `... male` – Normal-, Detail- (R Kavität, G Lippen, B Glanz-Zonen) und Farbzonen-Maps
+4. Vorschau: `blender -b --python Tools/MPFB/skin_shader_preview.py -- <ausgabe>`
