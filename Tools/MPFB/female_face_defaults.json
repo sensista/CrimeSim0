@@ -22,11 +22,11 @@
  "mouth-upperlip-volume-decr-incr": 0.15,
  "neck-scale-horiz-decr-incr": -0.35,
  "neck-scale-depth-decr-incr": -0.2,
- "neck-scale-vert-decr-incr": 0.3,
+ "neck-scale-vert-decr-incr": 0.15,
  "neck-double-decr-incr": -0.3,
  "l-cheek-volume-decr-incr": 0.2,
  "r-cheek-volume-decr-incr": 0.2,
  "l-upperarm-shoulder-muscle-decr-incr": -0.3,
  "r-upperarm-shoulder-muscle-decr-incr": -0.3,
- "measure-neck-height-decr-incr": 0.3
+ "measure-neck-height-decr-incr": 0.15
 }

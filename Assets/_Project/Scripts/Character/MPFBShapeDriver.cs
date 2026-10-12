@@ -145,13 +145,13 @@ namespace CrimeSim
                 case "mouth-upperlip-volume-decr-incr": return 0.15f;
                 case "neck-scale-horiz-decr-incr": return -0.35f;
                 case "neck-scale-depth-decr-incr": return -0.2f;
-                case "neck-scale-vert-decr-incr": return 0.3f;
+                case "neck-scale-vert-decr-incr": return 0.15f;
                 case "neck-double-decr-incr": return -0.3f;
                 case "l-cheek-volume-decr-incr": return 0.2f;
                 case "r-cheek-volume-decr-incr": return 0.2f;
                 case "l-upperarm-shoulder-muscle-decr-incr": return -0.3f;
                 case "r-upperarm-shoulder-muscle-decr-incr": return -0.3f;
-                case "measure-neck-height-decr-incr": return 0.3f;
+                case "measure-neck-height-decr-incr": return 0.15f;
                 default: return 0f;
             }
         }
