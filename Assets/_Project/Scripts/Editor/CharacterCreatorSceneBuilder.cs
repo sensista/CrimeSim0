@@ -47,7 +47,7 @@ namespace CrimeSim.EditorTools
             preview.transform.position = new Vector3(0f, 0.1f, 0f);
             var applier = preview.AddComponent<CrimeSim.CharacterAppearanceApplier>();
 
-            // Kamera: Charakter rechts im Bild, links Platz für die UI
+            // Kamera: Orbit-Kamera, Charakter rechts im Bild, links Platz für die UI
             var camGo = new GameObject("Main Camera");
             camGo.tag = "MainCamera";
             var cam = camGo.AddComponent<Camera>();
@@ -55,8 +55,13 @@ namespace CrimeSim.EditorTools
             cam.backgroundColor = new Color(0.12f, 0.13f, 0.16f);
             cam.fieldOfView = 40f;
             camGo.AddComponent<AudioListener>();
-            camGo.transform.position = new Vector3(-0.9f, 1.15f, 3.6f);
-            camGo.transform.rotation = Quaternion.Euler(4f, 180f, 0f);
+            camGo.transform.position = new Vector3(0f, 1f, 3.5f);
+            camGo.transform.rotation = Quaternion.Euler(5f, 180f, 0f);
+            var orbit = camGo.AddComponent<CrimeSim.CreatorOrbitCamera>();
+            var oso = new SerializedObject(orbit);
+            oso.FindProperty("target").objectReferenceValue = preview.transform;
+            oso.FindProperty("character").objectReferenceValue = applier;
+            oso.ApplyModifiedPropertiesWithoutUndo();
 
             var es = new GameObject("EventSystem", typeof(EventSystem));
 #if ENABLE_INPUT_SYSTEM
@@ -69,7 +74,7 @@ namespace CrimeSim.EditorTools
             var ui = uiGo.AddComponent<CrimeSim.CharacterCreatorUI>();
             var so = new SerializedObject(ui);
             so.FindProperty("preview").objectReferenceValue = applier;
-            so.FindProperty("rotateTarget").objectReferenceValue = preview.transform;
+            so.FindProperty("orbitCamera").objectReferenceValue = orbit;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, TestLevelBuilder.CreatorScenePath);

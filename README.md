@@ -45,7 +45,8 @@ Hinweis: Render Graph aktiv lassen (Project Settings → Graphics → URP, Compa
 
 ## Character Creator
 1. Menü **CrimeSim → Character Creator Szene erstellen** (erzeugt `Scenes/CharacterCreator.unity`) und **CrimeSim → Testlevel erstellen** erneut ausführen (Player bekommt das neue Charakter-Rig). Beide Menüs tragen die Szenen in die Build Settings ein (Creator zuerst).
-2. `CharacterCreator` öffnen und Play drücken: Name, Größe, Statur, Kopfgröße, Körperfett, Muskeln, Hautfarbe, Frisur, Kleidung und Farben einstellen, **Zufall** würfelt. Linke Maustaste ziehen dreht die Vorschau.
+2. `CharacterCreator` öffnen und Play drücken: Name, Größe, Statur, Kopfgröße, Körperfett, Muskeln, Hautfarbe, Frisur, Kleidung und Farben einstellen, **Zufall** würfelt. Das Menü links ist scrollbar.
+   Kamera: **mittlere Maustaste** ziehen = drehen, **Shift + mittlere Maustaste** = hoch/runter am Körper, **Mausrad** = Zoom, Button **Ansicht zurücksetzen**.
 3. **Fertig** speichert nach `Application.persistentDataPath/character.json` und lädt `TestLevel`. Dort lädt der Player den Charakter automatisch.
 
 **Feste Merkmale** (aus dem Creator): Größe, Statur, Kopf, Haut, Haare, Kleidung.

@@ -16,9 +16,9 @@ namespace CrimeSim
     public class CharacterCreatorUI : MonoBehaviour
     {
         [SerializeField] private CharacterAppearanceApplier preview;
-        [SerializeField] private Transform rotateTarget;
+        [SerializeField] private CreatorOrbitCamera orbitCamera;
         [SerializeField] private string gameSceneName = "TestLevel";
-        [SerializeField] private float rotateSpeed = 0.4f;
+        [SerializeField] private float panelWidth = 360f;
 
         private static readonly Color[] SkinColors =
         {
@@ -51,7 +51,7 @@ namespace CrimeSim
         private void Start()
         {
             if (preview == null) preview = FindFirstObjectByType<CharacterAppearanceApplier>();
-            if (rotateTarget == null && preview != null) rotateTarget = preview.transform;
+            if (orbitCamera == null) orbitCamera = FindFirstObjectByType<CreatorOrbitCamera>();
 
             data = preview != null ? preview.Appearance.Clone() : new CharacterAppearance();
             body = preview != null ? preview.Body : BodyStats.Default;
@@ -64,24 +64,6 @@ namespace CrimeSim
             EnsureEventSystem();
             BuildUI();
             refreshUI?.Invoke();
-        }
-
-        // ---------------------------------------------------------------- Vorschau drehen
-
-        private void Update()
-        {
-            if (rotateTarget == null) return;
-            bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-            float dx = 0f;
-            bool held = false;
-#if ENABLE_INPUT_SYSTEM
-            var mouse = Mouse.current;
-            if (mouse != null) { held = mouse.leftButton.isPressed; dx = mouse.delta.ReadValue().x; }
-#elif ENABLE_LEGACY_INPUT_MANAGER
-            held = Input.GetMouseButton(0);
-            dx = Input.GetAxis("Mouse X") * 10f;
-#endif
-            if (held && !overUI) rotateTarget.Rotate(0f, -dx * rotateSpeed, 0f, Space.World);
         }
 
         // ---------------------------------------------------------------- Aktionen
@@ -153,25 +135,52 @@ namespace CrimeSim
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.matchWidthOrHeight = 0.5f;
 
-            var panelGo = new GameObject("Panel", typeof(RectTransform), typeof(Image), typeof(VerticalLayoutGroup));
+            // Panel: linker Rand, volle Höhe, feste Breite, scrollbar
+            var panelGo = new GameObject("Panel", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
             panelGo.transform.SetParent(canvasGo.transform, false);
             var prt = (RectTransform)panelGo.transform;
             prt.anchorMin = new Vector2(0f, 0f);
             prt.anchorMax = new Vector2(0f, 1f);
             prt.pivot = new Vector2(0f, 0.5f);
-            prt.sizeDelta = new Vector2(560f, -40f);
-            prt.anchoredPosition = new Vector2(20f, 0f);
+            prt.sizeDelta = new Vector2(panelWidth, 0f);
+            prt.anchoredPosition = Vector2.zero;
             panelGo.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
-            var vlg = panelGo.GetComponent<VerticalLayoutGroup>();
-            vlg.padding = new RectOffset(20, 20, 20, 20);
-            vlg.spacing = 6f;
+
+            var viewportGo = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D));
+            viewportGo.transform.SetParent(panelGo.transform, false);
+            var vrt = (RectTransform)viewportGo.transform;
+            vrt.anchorMin = Vector2.zero;
+            vrt.anchorMax = Vector2.one;
+            vrt.offsetMin = Vector2.zero;
+            vrt.offsetMax = Vector2.zero;
+
+            var contentGo = new GameObject("Content", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
+            contentGo.transform.SetParent(viewportGo.transform, false);
+            var crt = (RectTransform)contentGo.transform;
+            crt.anchorMin = new Vector2(0f, 1f);
+            crt.anchorMax = new Vector2(1f, 1f);
+            crt.pivot = new Vector2(0.5f, 1f);
+            crt.sizeDelta = Vector2.zero;
+            crt.anchoredPosition = Vector2.zero;
+            contentGo.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var vlg = contentGo.GetComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(14, 14, 14, 14);
+            vlg.spacing = 5f;
             vlg.childControlHeight = true;
             vlg.childControlWidth = true;
             vlg.childForceExpandHeight = false;
             vlg.childForceExpandWidth = true;
-            panel = panelGo.transform;
 
-            Label("Character Creator", 34, FontStyle.Bold);
+            var scroll = panelGo.GetComponent<ScrollRect>();
+            scroll.viewport = vrt;
+            scroll.content = crt;
+            scroll.horizontal = false;
+            scroll.vertical = true;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 30f;
+            panel = contentGo.transform;
+
+            Label("Character Creator", 28, FontStyle.Bold);
 
             Label("Name", 20);
             var input = DefaultControls.CreateInputField(res).GetComponent<InputField>();
@@ -200,7 +209,10 @@ namespace CrimeSim
             MakeButton(row, "Zufall", Randomize);
             MakeButton(row, "Fertig", Finish);
 
-            Label("Vorschau mit gedrückter linker Maustaste drehen", 16, FontStyle.Italic);
+            var viewRow = Row(40f);
+            MakeButton(viewRow, "Ansicht zurücksetzen", () => { if (orbitCamera != null) orbitCamera.ResetView(); });
+            var help = Label("Mittlere Maustaste: drehen\nShift + mittlere Maustaste: hoch/runter\nMausrad: Zoom", 14, FontStyle.Italic);
+            help.GetComponent<LayoutElement>().preferredHeight = 64f;
 
             // InputField-Name bei Zufall nicht ändern; restliche Werte über refreshUI aktualisieren
             FixFonts(canvasGo);
@@ -249,7 +261,7 @@ namespace CrimeSim
         {
             var row = Row(30f);
             var label = Label(title, 18, FontStyle.Normal, row);
-            label.GetComponent<LayoutElement>().preferredWidth = 160f;
+            label.GetComponent<LayoutElement>().preferredWidth = 110f;
             label.GetComponent<LayoutElement>().flexibleWidth = 0f;
 
             var sliderGo = DefaultControls.CreateSlider(res);
@@ -280,7 +292,7 @@ namespace CrimeSim
         {
             var row = Row(36f);
             var label = Label(title, 18, FontStyle.Normal, row);
-            label.GetComponent<LayoutElement>().preferredWidth = 160f;
+            label.GetComponent<LayoutElement>().preferredWidth = 110f;
             MakeButton(row, "<", () => { set(Wrap(get() - 1, StyleCount(slot))); ApplyAppearance(); });
             var value = Label("", 18, FontStyle.Bold, row);
             value.alignment = TextAnchor.MiddleCenter;
@@ -298,7 +310,7 @@ namespace CrimeSim
             go.transform.SetParent(parent, false);
             go.AddComponent<LayoutElement>();
             var t = go.GetComponentInChildren<Text>();
-            if (t != null) { t.text = text; t.font = font; t.fontSize = 20; }
+            if (t != null) { t.text = text; t.font = font; t.fontSize = 17; }
             var b = go.GetComponent<Button>();
             b.onClick.AddListener(() => onClick());
             return b;
