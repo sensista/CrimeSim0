@@ -33,6 +33,16 @@ Im Unity-Menü **CrimeSim → Testlevel erstellen** wählen. Das Skript:
 
 Erneut ausführen überschreibt die Szene. Danach Play drücken: WASD, Maus, **V** zum Umschalten.
 
+## Umstieg auf URP
+Das Projekt nutzt die Universal Render Pipeline (URP 17.3.0 für Unity 6000.3).
+1. In Cursor `develop` pullen.
+2. Unity öffnen und warten, bis das URP-Paket importiert und alles kompiliert ist.
+3. Menü **CrimeSim → URP einrichten**: legt Pipeline-Asset und Renderer unter `Assets/_Project/Settings/URP` an, trägt sie in Graphics und alle Quality-Stufen ein und stellt Standard-Materialien unter `Assets/_Project` auf URP/Lit um. Zusammenfassung steht in der Konsole.
+4. **CrimeSim → Testlevel erstellen** und **CrimeSim → Character Creator Szene erstellen** erneut ausführen.
+5. Prüfen, dass nichts pink ist, dann alle erzeugten bzw. geänderten Dateien committen (Settings/URP, Materialien, Szenen, `ProjectSettings/GraphicsSettings.asset`, `QualitySettings.asset`, `.meta`, `packages-lock.json`).
+
+Hinweis: Render Graph aktiv lassen (Project Settings → Graphics → URP, Compatibility Mode aus).
+
 ## Character Creator
 1. Menü **CrimeSim → Character Creator Szene erstellen** (erzeugt `Scenes/CharacterCreator.unity`) und **CrimeSim → Testlevel erstellen** erneut ausführen (Player bekommt das neue Charakter-Rig). Beide Menüs tragen die Szenen in die Build Settings ein (Creator zuerst).
 2. `CharacterCreator` öffnen und Play drücken: Name, Größe, Statur, Kopfgröße, Körperfett, Muskeln, Hautfarbe, Frisur, Kleidung und Farben einstellen, **Zufall** würfelt. Linke Maustaste ziehen dreht die Vorschau.

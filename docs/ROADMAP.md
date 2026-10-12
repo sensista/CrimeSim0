@@ -13,6 +13,8 @@
 - [ ] Projekt in Unity 6000.3.25f1 öffnen, generierte Dateien committen
 
 ## Phase 1: Vertical Slice (Prototyp)
+- [x] Umstieg auf URP vorbereitet (Paket + Menü CrimeSim → URP einrichten)
+- [ ] URP in Unity einrichten, Szenen neu erzeugen und committen
 - [x] Umschaltbare Kamera Third/First Person (CameraController, Taste V)
 - [x] Testlevel per Editor-Menü (CrimeSim → Testlevel erstellen)
 - [ ] Bewegung und Kamera im Testlevel testen und feinjustieren
