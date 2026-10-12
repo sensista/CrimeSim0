@@ -217,7 +217,7 @@ namespace CrimeSim.EditorTools
             MakeLight("Key Light (warm, gedimmt)", LightType.Directional, new Color(1f, 0.82f, 0.64f), 0.45f,
                 Quaternion.Euler(30f, 140f, 0f), Vector3.zero, LightShadows.Soft);
             MakeLight("Lampe warm (links vorne)", LightType.Point, new Color(1f, 0.6f, 0.3f), 1.4f,
-                Quaternion.identity, new Vector3(-1.1f, 1.5f, 1.0f), LightShadows.Soft).range = 3.5f;
+                Quaternion.identity, new Vector3(-1.1f, 1.5f, 1.0f), LightShadows.None).range = 3.5f;
             MakeLight("Neon kühl (rechts)", LightType.Point, new Color(0.35f, 0.6f, 1f), 1.0f,
                 Quaternion.identity, new Vector3(1.4f, 1.7f, 0.4f), LightShadows.None).range = 3.5f;
             MakeLight("Neon magenta (hinten rechts)", LightType.Point, new Color(0.9f, 0.3f, 0.7f), 0.6f,
@@ -309,6 +309,13 @@ namespace CrimeSim.EditorTools
             go.transform.position = pos;
             go.transform.rotation = rot;
             if (lookAt.HasValue) go.transform.LookAt(lookAt.Value);
+            if (shadows != LightShadows.None)
+            {
+                l.shadowBias = 0.08f;
+                l.shadowNormalBias = 0.6f;
+                l.shadowStrength = 0.85f;
+                l.shadowResolution = UnityEngine.Rendering.LightShadowResolution.VeryHigh;
+            }
             if (type == LightType.Spot) { l.range = 4f; l.spotAngle = 35f; l.innerSpotAngle = 15f; }
             return l;
         }

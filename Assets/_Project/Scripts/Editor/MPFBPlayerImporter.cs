@@ -90,10 +90,12 @@ namespace CrimeSim.EditorTools
             mi.importVisibility = false;
             mi.importCameras = false;
             mi.importLights = false;
-            mi.importNormals = ModelImporterNormals.Import;
+            // Normalen selbst glatt berechnen (MPFB-Export wirkt sonst facettiert)
+            mi.importNormals = ModelImporterNormals.Calculate;
             mi.importBlendShapeNormals = ModelImporterNormals.Calculate;
             mi.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
-            mi.normalSmoothingAngle = 60f;
+            mi.normalSmoothingAngle = 180f;
+            mi.legacyBlendShapeNormals = false;
             mi.importTangents = ModelImporterTangents.CalculateMikk;
             mi.skinWeights = ModelImporterSkinWeights.Standard; // 4 Einflüsse pro Vertex
             mi.optimizeMeshVertices = true;

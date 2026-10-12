@@ -18,6 +18,7 @@ Shader "CrimeSim/StylizedSkin"
         _RampBlend ("Gemalte Stufe (0 weich, 1 hart)", Range(0, 1)) = 0.3
         _ShadowTint ("Schattenfarbe", Color) = (0.6, 0.48, 0.5, 1)
         _SSSColor ("Durchschein-Farbe (SSS)", Color) = (0.9, 0.35, 0.25, 1)
+        _ShadowStrength ("Schattenstärke (Eigenschatten)", Range(0, 1)) = 0.7
         _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.2
         _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.85
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
@@ -64,6 +65,7 @@ Shader "CrimeSim/StylizedSkin"
             half4 _ShadowTint;
             half4 _SSSColor;
             half _SSSStrength;
+            half _ShadowStrength;
             half _AmbientStrength;
             half _Saturation;
             half _ShadowLift;
@@ -113,7 +115,10 @@ Shader "CrimeSim/StylizedSkin"
             half3 CSShadeLight(Light light, CSSurface s)
             {
                 half NdotL = dot(s.normalWS, light.direction);
-                half atten = light.distanceAttenuation * lerp(1.0h, light.shadowAttenuation, 0.85h);
+                // Schatten weich in die Wrap-Beleuchtung blenden, damit keine harten Treppen entstehen
+                half sh = lerp(1.0h, light.shadowAttenuation, _ShadowStrength);
+                sh = lerp(sh, 1.0h, saturate(1.0h - abs(NdotL) * 3.0h) * 0.5h);
+                half atten = light.distanceAttenuation * sh;
                 half3 shade = CSSoftDiffuse(NdotL, _Wrap, _RampCenter, _RampSoftness, _RampBlend, _SSSColor.rgb, _SSSStrength);
                 half3 diffuse = s.albedo * shade;
                 half3 h = SafeNormalize(light.direction + s.viewDirWS);

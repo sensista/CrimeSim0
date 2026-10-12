@@ -58,6 +58,7 @@ Shader "CrimeSim/StylizedHair"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
             Cull [_Cull]
+            AlphaToMask On
             ZWrite On
             HLSLPROGRAM
             #pragma shader_feature_local _ALPHATEST_ON
@@ -101,8 +102,10 @@ Shader "CrimeSim/StylizedHair"
                 UNITY_SETUP_INSTANCE_ID(i);
                 half4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv * _BaseMap_ST.xy + _BaseMap_ST.zw);
                 half alpha = tex.a * _BaseColor.a;
+                // Alpha-to-Coverage (MSAA): weiche Kanten statt harter Pixel
+                half coverage = saturate((alpha - _Cutoff) / max(fwidth(alpha), 0.0001h) + 0.5h);
             #if defined(_ALPHATEST_ON)
-                clip(alpha - _Cutoff);
+                clip(alpha - _Cutoff * 0.3h);
             #endif
                 half3 n = normalize(i.normalWS);
                 n = isFrontFace ? n : -n;
@@ -121,7 +124,7 @@ Shader "CrimeSim/StylizedHair"
                 half rim = pow(1.0h - saturate(dot(n, s.viewDirWS)), _RimPower) * _RimStrength;
                 color += rim * _RimColor.rgb * s.albedo;
                 color = MixFog(color, i.fogFactor);
-                return half4(color, 1.0h);
+                return half4(color, coverage);
             }
             ENDHLSL
         }

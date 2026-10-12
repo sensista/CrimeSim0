@@ -49,6 +49,19 @@ namespace CrimeSim.EditorTools
             // Kantenglättung: volle Auflösung + 4x MSAA
             pipeline.renderScale = 1f;
             pipeline.msaaSampleCount = 4;
+            // Schatten: hohe Auflösung, weiche Schatten, 4 Kaskaden
+            var pso = new SerializedObject(pipeline);
+            void SetInt(string n, int v) { var p = pso.FindProperty(n); if (p != null) p.intValue = v; }
+            void SetBool(string n, bool v) { var p = pso.FindProperty(n); if (p != null) p.boolValue = v; }
+            void SetFloat(string n, float v) { var p = pso.FindProperty(n); if (p != null) p.floatValue = v; }
+            SetInt("m_MainLightShadowmapResolution", 4096);
+            SetInt("m_AdditionalLightsShadowmapResolution", 2048);
+            SetBool("m_AdditionalLightShadowsSupported", true);
+            SetFloat("m_ShadowDistance", 30f);
+            SetInt("m_ShadowCascadeCount", 4);
+            SetBool("m_SoftShadowsSupported", true);
+            SetInt("m_SoftShadowQuality", 3);
+            pso.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(pipeline);
             AssetDatabase.SaveAssets();
 
