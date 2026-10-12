@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4027901799156605940
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8531248215242998404, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8531248215242998404, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8531248215242998404, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c74770cbb5f945d4c99cdb5115b9015e, type: 2}
+    - target: {fileID: -5738929356375114689, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5738929356375114689, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5738929356375114689, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 88a372c9ce38ed340b6e05d2ca638fba, type: 2}
+    - target: {fileID: -2499931186915314335, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2499931186915314335, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5bb6d6babd2f1254599755ba37fad3e5, type: 2}
+    - target: {fileID: 486234901822142722, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 486234901822142722, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1d87cd1e1f03b7e4ead68545b8e965f8, type: 2}
+    - target: {fileID: 919132149155446097, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_Name
+      value: PlayerMPFB
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630794972795428178, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1630794972795428178, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 50fdbd35391d44440b402b82163b1f2e, type: 2}
+    - target: {fileID: 2321523695958950486, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2321523695958950486, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 784503a2bff362049ae86fed23f64b7c, type: 2}
+    - target: {fileID: 4641701608327453127, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4641701608327453127, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f242396b3f8d71f439ad22220aafc6d6, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8626154274752587844, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8626154274752587844, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c67ca4a823521a9498212b018bfc15ef, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2553439470592050136}
+  m_SourcePrefab: {fileID: 100100000, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+--- !u!4 &3490080963023569951 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+  m_PrefabInstance: {fileID: 4027901799156605940}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4261692267140472485 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 89f2a220ca39a084c8d5ce7b622d4232, type: 3}
+  m_PrefabInstance: {fileID: 4027901799156605940}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2553439470592050136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4261692267140472485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbd6d8d9d38bcf14ea3c6de108340707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrimeSim.MPFBShapeDriver
+  manifestJson: {fileID: 4900000, guid: 9c6026f48851b3649b3f4d18bedccfcd, type: 3}
+  modelRoot: {fileID: 3490080963023569951}
+  headAnchor: {fileID: 0}
+  headAnchorOffset: {x: 0, y: 0.07, z: 0.09}
+  adjustSkeleton: 1
+  fitCharacterController: 1
+  bodyRendererName: Body
+  femaleOnly:
+  - Underwear_Panties
+  - Underwear_Top
+  maleOnly:
+  - Underwear_Briefs
+  skinColor: {r: 0.87, g: 0.69, b: 0.55, a: 1}
