@@ -107,7 +107,51 @@ namespace CrimeSim
             }
         }
 
-        public float GetValue(string id) => values.TryGetValue(id, out var v) ? v : DefaultValue(id);
+        /// <summary>
+        /// Zusätzliche Standardwerte für weibliche Gesichter (feiner, klar erwachsen ~25).
+        /// Werden mit der Weiblichkeit (1 - gender) überblendet; Männer bleiben unverändert.
+        /// Liste auch in Tools/MPFB/female_face_defaults.json.
+        /// </summary>
+        public static float FemaleDefaultOffset(string id)
+        {
+            switch (id)
+            {
+                case "chin-width-decr-incr": return -0.35f;
+                case "chin-prominent-decr-incr": return -0.2f;
+                case "chin-height-decr-incr": return -0.15f;
+                case "chin-bones-decr-incr": return -0.3f;
+                case "head-oval": return 0.3f;
+                case "l-cheek-bones-decr-incr": return 0.35f;
+                case "r-cheek-bones-decr-incr": return 0.35f;
+                case "l-cheek-trans-down-up": return 0.2f;
+                case "r-cheek-trans-down-up": return 0.2f;
+                case "l-eye-scale-decr-incr": return 0.15f;
+                case "r-eye-scale-decr-incr": return 0.15f;
+                case "l-eye-corner2-down-up": return 0.25f;
+                case "r-eye-corner2-down-up": return 0.25f;
+                case "nose-scale-horiz-decr-incr": return -0.2f;
+                case "nose-width1-decr-incr": return -0.25f;
+                case "nose-point-width-decr-incr": return -0.3f;
+                case "nose-volume-decr-incr": return -0.15f;
+                case "eyebrows-trans-backward-forward": return -0.3f;
+                case "forehead-trans-backward-forward": return -0.15f;
+                case "mouth-cupidsbow-decr-incr": return 0.3f;
+                case "mouth-upperlip-volume-decr-incr": return 0.15f;
+                case "neck-scale-horiz-decr-incr": return -0.2f;
+                default: return 0f;
+            }
+        }
+
+        public float GetValue(string id)
+        {
+            if (values.TryGetValue(id, out var v)) return v;
+            float d = DefaultValue(id);
+            if (id == "gender") return d;
+            float off = FemaleDefaultOffset(id);
+            if (off == 0f) return d;
+            float g = values.TryGetValue("gender", out var gv) ? gv : DefaultValue("gender");
+            return d + off * (1f - Mathf.Clamp01(g / 0.5f)); // voll bei g=0, 0 ab g=0.5
+        }
 
         public void SetValue(string id, float value)
         {

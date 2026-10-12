@@ -166,6 +166,19 @@ namespace CrimeSim.EditorTools
             FixTextureImport(AOMap, false);
             var ao = AssetDatabase.LoadAssetAtPath<Texture2D>(AOMap);
             if (ao != null) m.SetTexture("_AOMap", ao);
+            void Tex(string file, string prop, bool repeat)
+            {
+                string path = CharTexFolder + "/" + file;
+                FixTextureImport(path, false);
+                var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (ti != null && repeat && ti.wrapMode != TextureWrapMode.Repeat) { ti.wrapMode = TextureWrapMode.Repeat; ti.SaveAndReimport(); }
+                if (ti != null && !repeat && ti.wrapMode != TextureWrapMode.Clamp) { ti.wrapMode = TextureWrapMode.Clamp; ti.SaveAndReimport(); }
+                var t = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                if (t != null && m.HasProperty(prop)) m.SetTexture(prop, t);
+            }
+            Tex("skin_variation.png", "_VariationMap", false);
+            Tex("skin_thickness.png", "_ThicknessMap", false);
+            Tex("skin_brush.png", "_BrushMap", true);
             EditorUtility.SetDirty(m);
             return m;
         }

@@ -1,45 +1,73 @@
-// CrimeSim/StylizedSkin – halb-realistische, weich gemalte Haut für URP 17 (Unity 6).
-// Wrap-Diffuse + weiche Stufe, warmer Fake-SSS am Terminator, Rouge, Randlicht, weiches Glanzlicht.
-// _BaseColor ist die Hautfarbe aus dem Creator (MPFBShapeDriver setzt sie per MaterialPropertyBlock).
-// Ist _BaseColor == _ToneReference, wird die Textur unverändert gezeigt.
+// CrimeSim/StylizedSkin – halb-realistische Haut mit regelbarem Malanteil (_Painterly 0..1, Standard 0.35) für URP 17.
+// Realistische Form und Licht, dazu dezent gemalte Übergänge und Farbvariation.
+//  - Gemalte Lichtbänder mit weichen, sichtbaren Übergängen; Pinselstriche stören Lichtgrenze und Farbe
+//  - Farbtöne: Licht (Pfirsich) -> warmer rosiger Terminator -> Schatten mit warm/kühler Farbmischung
+//  - Leicht entsättigte Mitteltöne, gemalte Farbvariation (Wangen/Nase/Ohren röter, Stirn gelber,
+//    Kiefer/Augenhöhlen kühler), gemalte AO und Rouge, sehr dezentes gemaltes Glanzlicht
+//  - Gegenlicht an dünnen Stellen (Ohren, Nase) über gebackene Dicken-Karte
+// _BaseColor = Hautfarbe aus dem Creator (per MaterialPropertyBlock). Multiplikativ => hell bis dunkel.
 Shader "CrimeSim/StylizedSkin"
 {
     Properties
     {
+        _Painterly ("Malerisch (0 sauber, 1 stark gemalt)", Range(0, 1)) = 0.35
         [MainTexture] _BaseMap ("Haut-Textur", 2D) = "white" {}
         [MainColor] _BaseColor ("Hautfarbe (Creator)", Color) = (0.87, 0.69, 0.55, 1)
         _ToneReference ("Referenz-Hautfarbe der Textur", Color) = (0.87, 0.69, 0.55, 1)
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
+        _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.94, 0.87, 1)
+        _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.95
+        _MidDesaturate ("Mitteltöne entsättigen", Range(0, 1)) = 0.25
 
-        [Header(Weiche Beleuchtung)]
-        _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.6
-        _RampCenter ("Schattengrenze", Range(0, 1)) = 0.42
-        _RampSoftness ("Weichheit Schattengrenze", Range(0.01, 0.5)) = 0.22
-        _RampBlend ("Gemalte Stufe (0 weich, 1 hart)", Range(0, 1)) = 0.3
-        _ShadowTint ("Schattenfarbe", Color) = (0.6, 0.48, 0.5, 1)
-        _SSSColor ("Durchschein-Farbe (SSS)", Color) = (0.9, 0.35, 0.25, 1)
-        _ShadowStrength ("Schattenstärke (Eigenschatten)", Range(0, 1)) = 0.45
-        _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.2
-        _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.78
+        [Header(Gemalte Lichtbaender)]
+        _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.5
+        _Bands ("Anzahl Lichtbänder", Range(1, 6)) = 3
+        _BandSoftness ("Weichheit der Bänder", Range(0.02, 1)) = 0.4
+        _BandBlend ("Bänder sichtbar (bei Malerisch=1)", Range(0, 1)) = 0.8
+        _TerminatorColor ("Terminator (warm, rosig)", Color) = (1.0, 0.64, 0.56, 1)
+        _TerminatorWidth ("Terminator-Breite", Range(0.05, 0.6)) = 0.28
+        _TerminatorStrength ("Terminator-Stärke", Range(0, 1)) = 0.6
+        _ShadowTint ("Schatten kühl", Color) = (0.6, 0.52, 0.66, 1)
+        _ShadowWarm ("Schatten warm", Color) = (0.72, 0.48, 0.44, 1)
+        _ShadowStrength ("Eigenschatten-Stärke", Range(0, 1)) = 0.45
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
         _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.1
 
+        [Header(Pinselstriche Oel)]
+        [NoScaleOffset] _BrushMap ("Pinselstriche (kachelbar)", 2D) = "gray" {}
+        _BrushScale ("Pinsel-Kachelung", Range(1, 40)) = 7
+        _BrushColor ("Pinsel auf Farbe", Range(0, 0.5)) = 0.1
+        _BrushLight ("Pinsel auf Lichtgrenze", Range(0, 0.5)) = 0.18
+        _BrushNormal ("Pinsel-Relief (Impasto)", Range(0, 1)) = 0.15
+
+        [Header(Gemalte Farbvariation)]
+        [NoScaleOffset] _VariationMap ("Variation (R rot, G gelb, B kühl)", 2D) = "black" {}
+        _RedTint ("Rötung", Color) = (1.0, 0.72, 0.68, 1)
+        _YellowTint ("Gelblich", Color) = (1.0, 0.95, 0.8, 1)
+        _CoolTint ("Kühl", Color) = (0.86, 0.83, 0.93, 1)
+        _VariationStrength ("Variation-Stärke", Range(0, 1)) = 0.6
+
         [Header(Gemalte Tiefe AO)]
         [NoScaleOffset] _AOMap ("AO-Map (gebacken)", 2D) = "white" {}
-        _AOStrength ("AO-Stärke", Range(0, 1)) = 0.55
-        _AOColor ("AO-Farbe (warm)", Color) = (0.62, 0.36, 0.32, 1)
+        _AOStrength ("AO-Stärke", Range(0, 1)) = 0.6
+        _AOColor ("AO-Farbe (warm)", Color) = (0.66, 0.4, 0.38, 1)
 
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
-        _BlushColor ("Rouge-Farbe", Color) = (0.88, 0.45, 0.42, 1)
-        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.35
+        _BlushColor ("Rouge-Farbe", Color) = (0.95, 0.5, 0.48, 1)
+        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.4
 
-        [Header(Glanz und Randlicht)]
-        _Smoothness ("Glätte", Range(0, 1)) = 0.45
-        _SpecularStrength ("Glanzlicht", Range(0, 1)) = 0.12
+        [Header(Gegenlicht duenne Stellen)]
+        [NoScaleOffset] _ThicknessMap ("Dünne Stellen (hell = dünn)", 2D) = "black" {}
+        _TransColor ("Durchschein-Farbe", Color) = (1.0, 0.4, 0.3, 1)
+        _TransStrength ("Durchschein-Stärke", Range(0, 2)) = 0.8
+
+        [Header(Gemaltes Glanzlicht und Rand)]
+        _HighlightSize ("Glanzlicht-Größe", Range(0.5, 0.99)) = 0.9
+        _HighlightStrength ("Glanzlicht-Stärke", Range(0, 0.5)) = 0.05
         _RimColor ("Randlicht-Farbe", Color) = (1, 0.82, 0.7, 1)
-        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.12
-        _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 5
+        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.15
+        _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 4
 
         [Header(Normal Map)]
         [Toggle(_NORMALMAP)] _UseNormalMap ("Normal Map benutzen", Float) = 0
@@ -48,7 +76,6 @@ Shader "CrimeSim/StylizedSkin"
 
         [Header(Kleidung)]
         _HideMask ("Körper ausblenden (R Höschen, G Top, B Slip)", Vector) = (0, 0, 0, 0)
-        _ShadowLiftFace ("(reserviert)", Float) = 0
         [HideInInspector] _Cutoff ("Cutoff", Range(0, 1)) = 0.5
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
     }
@@ -64,41 +91,58 @@ Shader "CrimeSim/StylizedSkin"
 
         CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
+            half _Painterly;
             half4 _BaseColor;
             half4 _ToneReference;
             half _ToneStrength;
+            half4 _Peach;
+            half _Saturation;
+            half _MidDesaturate;
             half _Wrap;
-            half _RampCenter;
-            half _RampSoftness;
-            half _RampBlend;
+            half _Bands;
+            half _BandSoftness;
+            half _BandBlend;
+            half4 _TerminatorColor;
+            half _TerminatorWidth;
+            half _TerminatorStrength;
             half4 _ShadowTint;
-            half4 _SSSColor;
-            half _SSSStrength;
+            half4 _ShadowWarm;
             half _ShadowStrength;
             half _AmbientStrength;
-            half _Saturation;
             half _ShadowLift;
+            half _BrushScale;
+            half _BrushColor;
+            half _BrushLight;
+            half _BrushNormal;
+            half4 _RedTint;
+            half4 _YellowTint;
+            half4 _CoolTint;
+            half _VariationStrength;
+            half _AOStrength;
+            half4 _AOColor;
             half4 _BlushColor;
             half _BlushStrength;
-            half _Smoothness;
-            half _SpecularStrength;
+            half4 _TransColor;
+            half _TransStrength;
+            half _HighlightSize;
+            half _HighlightStrength;
             half4 _RimColor;
             half _RimStrength;
             half _RimPower;
             half _BumpScale;
-            half _Cutoff;
             float4 _HideMask;
-            half _ShadowLiftFace;
-            half _AOStrength;
-            half4 _AOColor;
+            half _Cutoff;
         CBUFFER_END
 
-        TEXTURE2D(_BaseMap);   SAMPLER(sampler_BaseMap);
-        TEXTURE2D(_BlushMask); SAMPLER(sampler_BlushMask);
-        TEXTURE2D(_BumpMap);   SAMPLER(sampler_BumpMap);
-        TEXTURE2D(_AOMap);     SAMPLER(sampler_AOMap);
+        TEXTURE2D(_BaseMap);      SAMPLER(sampler_BaseMap);
+        TEXTURE2D(_BrushMap);     SAMPLER(sampler_BrushMap);
+        TEXTURE2D(_VariationMap); SAMPLER(sampler_VariationMap);
+        TEXTURE2D(_AOMap);        SAMPLER(sampler_AOMap);
+        TEXTURE2D(_BlushMask);    SAMPLER(sampler_BlushMask);
+        TEXTURE2D(_ThicknessMap); SAMPLER(sampler_ThicknessMap);
+        TEXTURE2D(_BumpMap);      SAMPLER(sampler_BumpMap);
 
-        half CSAlpha(float2 uv) { return SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv * _BaseMap_ST.xy + _BaseMap_ST.zw).a * _BaseColor.a; }
+        half CSAlpha(float2 uv) { return 1.0h; }
         ENDHLSL
 
         Pass
@@ -126,19 +170,52 @@ Shader "CrimeSim/StylizedSkin"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "CrimeSimStylizedCommon.hlsl"
 
+            // Pro Pixel gesetzt, in CSShadeLight benutzt
+            static half gThin;
+            static half gBrush;
+
+            // Gemalte Bänder: Lichtwert in n weiche Stufen, mit glattem Verlauf gemischt
+            half PaintedBands(half x)
+            {
+                half n = max(_Bands, 1.0h);
+                half y = x * n;
+                half f = frac(y);
+                half k = _BandSoftness * 0.5h;
+                half stepped = (floor(y) + smoothstep(0.5h - k, 0.5h + k, f)) / n;
+                return lerp(x, saturate(stepped), saturate(_BandBlend * _Painterly));
+            }
+
             half3 CSShadeLight(Light light, CSSurface s)
             {
                 half NdotL = dot(s.normalWS, light.direction);
-                // Schatten weich in die Wrap-Beleuchtung blenden, damit keine harten Treppen entstehen
                 half sh = lerp(1.0h, light.shadowAttenuation, _ShadowStrength);
                 sh = lerp(sh, 1.0h, saturate(1.0h - abs(NdotL) * 3.0h) * 0.5h);
-                half atten = light.distanceAttenuation * sh;
-                half3 shade = CSSoftDiffuse(NdotL, _Wrap, _RampCenter, _RampSoftness, _RampBlend, _SSSColor.rgb, _SSSStrength);
-                half3 diffuse = s.albedo * shade;
+                half w = saturate((NdotL + _Wrap) / (1.0h + _Wrap)) * sh;
+                // Pinselstriche verschieben die Lichtgrenze => gemalte, unregelmäßige Kante
+                w = saturate(w + (gBrush - 0.5h) * _BrushLight * 2.0h * _Painterly * saturate(1.0h - abs(w - 0.5h) * 1.5h));
+                half lit = PaintedBands(w);
+
+                // Schatten: warm/kühl gemischt (Pinsel entscheidet), Terminator warm-rosig
+                half3 shadowCol = lerp(_ShadowTint.rgb, _ShadowWarm.rgb, lerp(0.5h, gBrush, _Painterly));
+                half3 tone = lerp(shadowCol, 1.0h.xxx, lit);
+                half term = saturate(1.0h - abs(lit - 0.5h) / max(_TerminatorWidth, 0.01h));
+                tone = lerp(tone, tone * _TerminatorColor.rgb * 1.25h, term * _TerminatorStrength);
+                half3 col = s.albedo * tone * lit;
+                // Mitteltöne leicht entsättigen (malerisch)
+                half mid = saturate(1.0h - abs(lit - 0.55h) * 2.5h) * _MidDesaturate * _Painterly;
+                half l = dot(col, half3(0.3h, 0.59h, 0.11h));
+                col = lerp(col, l.xxx * half3(1.02h, 0.98h, 0.95h), mid);
+
+                // Gemaltes, weiches Glanzlicht
                 half3 h = SafeNormalize(light.direction + s.viewDirWS);
-                half specExp = exp2(10.0h * _Smoothness + 1.0h);
-                half spec = pow(saturate(dot(s.normalWS, h)), specExp) * _SpecularStrength * saturate(NdotL * 4.0h);
-                return (diffuse + spec.xxx) * light.color * atten;
+                half hl = smoothstep(_HighlightSize, _HighlightSize + 0.06h, dot(s.normalWS, h)) * _HighlightStrength * lit;
+                col += hl.xxx;
+
+                // Gegenlicht an dünnen Stellen
+                half back = pow(saturate(dot(s.viewDirWS, -light.direction)), 3.0h);
+                col += s.albedo * _TransColor.rgb * back * gThin * _TransStrength;
+
+                return col * light.color * light.distanceAttenuation;
             }
 
             #include "CrimeSimLightLoop.hlsl"
@@ -148,24 +225,45 @@ Shader "CrimeSim/StylizedSkin"
                 UNITY_SETUP_INSTANCE_ID(i);
                 CSBodyHideClip(i.color);
                 float2 uv = i.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                half4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
+                half3 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv).rgb;
 
                 half3 toneRatio = _BaseColor.rgb / max(_ToneReference.rgb, 0.05h);
-                half3 albedo = tex.rgb * lerp(1.0h.xxx, toneRatio, _ToneStrength);
+                half3 albedo = tex * lerp(1.0h.xxx, toneRatio, _ToneStrength) * _Peach.rgb;
+
+                half3 v = SAMPLE_TEXTURE2D(_VariationMap, sampler_VariationMap, i.uv).rgb * _VariationStrength;
+                albedo *= lerp(1.0h.xxx, _RedTint.rgb, v.r);
+                albedo *= lerp(1.0h.xxx, _YellowTint.rgb, v.g);
+                albedo *= lerp(1.0h.xxx, _CoolTint.rgb, v.b);
+
+                // Pinselstriche: Höhe + Gefälle (für Impasto-Relief)
+                float2 buv = i.uv * _BrushScale;
+                float2 du = float2(1.0 / 512.0, 0);
+                half b0 = SAMPLE_TEXTURE2D(_BrushMap, sampler_BrushMap, buv).r;
+                half bx = SAMPLE_TEXTURE2D(_BrushMap, sampler_BrushMap, buv + du.xy).r;
+                half by = SAMPLE_TEXTURE2D(_BrushMap, sampler_BrushMap, buv + du.yx).r;
+                gBrush = b0;
+                // Farbe: helle Striche wärmer/heller, dunkle leicht kühler (Farbmischung wie Öl)
+                half bc = (b0 - 0.5h) * _BrushColor * 2.0h * _Painterly;
+                albedo *= 1.0h + bc * half3(1.0h, 0.75h, 0.55h);
+
                 half blush = SAMPLE_TEXTURE2D(_BlushMask, sampler_BlushMask, i.uv).r * _BlushStrength;
-                albedo = lerp(albedo, albedo * _BlushColor.rgb * 1.4h, blush);
-                // Gemalte Tiefe: warme, weiche Verdunkelung in Falten (Hals, Schlüsselbein, Augenhöhlen, Nasolabial)
+                albedo = lerp(albedo, albedo * _BlushColor.rgb * 1.35h, blush);
                 half ao = SAMPLE_TEXTURE2D(_AOMap, sampler_AOMap, i.uv).r;
                 albedo *= lerp(1.0h.xxx, lerp(_AOColor.rgb, 1.0h.xxx, ao), _AOStrength);
-                albedo = saturate(lerp(dot(albedo, half3(0.3h, 0.59h, 0.11h)).xxx, albedo, _Saturation));
+
+                half lum = dot(albedo, half3(0.3h, 0.59h, 0.11h));
+                albedo = saturate(lerp(lum.xxx, albedo, _Saturation));
+                gThin = SAMPLE_TEXTURE2D(_ThicknessMap, sampler_ThicknessMap, i.uv).r;
 
                 half3 n = normalize(i.normalWS);
+                half3 t = normalize(i.tangentWS.xyz);
+                half3 bt = cross(n, t) * i.tangentWS.w;
             #if defined(_NORMALMAP)
                 half3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, i.uv), _BumpScale);
-                half3 t = normalize(i.tangentWS.xyz);
-                half3 b = cross(n, t) * i.tangentWS.w;
-                n = normalize(mul(nTS, half3x3(t, b, n)));
+                n = normalize(mul(nTS, half3x3(t, bt, n)));
             #endif
+                // Impasto: Pinsel-Gefälle kippt die Normale leicht
+                n = normalize(n - (t * (bx - b0) + bt * (by - b0)) * _BrushNormal * _Painterly * 8.0h);
                 n = isFrontFace ? n : -n;
 
                 CSSurface s = (CSSurface)0;
@@ -175,14 +273,12 @@ Shader "CrimeSim/StylizedSkin"
                 s.albedo = albedo;
 
                 half3 color = CSAccumulateLights(s, i.positionCS);
-                // Umgebung: Schattenseite farbig statt grau
-                color += SampleSH(n) * albedo * lerp(_ShadowTint.rgb, 1.0h.xxx, 0.35h) * _AmbientStrength;
-                // Dunkle Szenen: Haut säuft nicht ab, sondern bleibt warm getönt
-                color = max(color, albedo * _ShadowTint.rgb * _ShadowLift);
+                half3 shadowCol = lerp(_ShadowTint.rgb, _ShadowWarm.rgb, lerp(0.5h, gBrush, _Painterly));
+                color += SampleSH(n) * albedo * lerp(shadowCol, 1.0h.xxx, 0.4h) * _AmbientStrength;
+                color = max(color, albedo * shadowCol * _ShadowLift);
 
                 half NdotV = saturate(dot(n, s.viewDirWS));
-                half rim = pow(1.0h - NdotV, _RimPower) * _RimStrength;
-                color += rim * _RimColor.rgb * albedo;
+                color += pow(1.0h - NdotV, _RimPower) * _RimStrength * _RimColor.rgb * albedo;
 
                 color = MixFog(color, i.fogFactor);
                 return half4(color, 1.0h);
