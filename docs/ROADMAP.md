@@ -21,7 +21,12 @@
 - [ ] Inventar (Gegenstände aufnehmen, lagern, abgeben)
 - [ ] Wirtschaft und Geld (Kaufen, Verkaufen, Kontostand, Speichern)
 - [ ] Einfache NPC-Kunden (Anfrage, Treffpunkt, Bezahlung)
+- [x] Character Creator Grundsystem (Aussehen, Speichern, Platzhalter-Rig, Creator-Szene)
+- [x] Veränderlicher Körper: BodyCondition (Fett/Muskel), weiche Anpassung, Debug-Tasten F1–F4
+- [x] BlendShapeBodyTarget für echte Modelle (MPFB/Blender, Humanoid)
+- [ ] Erstes MPFB-Charaktermodell mit Rigify und Shape Keys (fat, muscle, build) importieren
 - [ ] Bedürfnisse (z. B. Hunger, Schlaf, Energie) und Zuhause
+- [ ] Körper koppeln an Essen, Training und Aktivität
 - [ ] UI: HUD, Inventar, Pausemenü
 
 ## Phase 2: Erweiterung

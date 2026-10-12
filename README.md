@@ -33,6 +33,25 @@ Im Unity-Menü **CrimeSim → Testlevel erstellen** wählen. Das Skript:
 
 Erneut ausführen überschreibt die Szene. Danach Play drücken: WASD, Maus, **V** zum Umschalten.
 
+## Character Creator
+1. Menü **CrimeSim → Character Creator Szene erstellen** (erzeugt `Scenes/CharacterCreator.unity`) und **CrimeSim → Testlevel erstellen** erneut ausführen (Player bekommt das neue Charakter-Rig). Beide Menüs tragen die Szenen in die Build Settings ein (Creator zuerst).
+2. `CharacterCreator` öffnen und Play drücken: Name, Größe, Statur, Kopfgröße, Körperfett, Muskeln, Hautfarbe, Frisur, Kleidung und Farben einstellen, **Zufall** würfelt. Linke Maustaste ziehen dreht die Vorschau.
+3. **Fertig** speichert nach `Application.persistentDataPath/character.json` und lädt `TestLevel`. Dort lädt der Player den Charakter automatisch.
+
+**Feste Merkmale** (aus dem Creator): Größe, Statur, Kopf, Haut, Haare, Kleidung.
+**Veränderlicher Körper** (`BodyCondition` am Player): Körperfett und Muskeln (0–1). Werte ändern sich weich sichtbar und werden gespeichert. Später gekoppelt an Essen, Training und Aktivität.
+**Debug im TestLevel:** F1/F2 mehr/weniger Fett, F3/F4 mehr/weniger Muskeln.
+
+Technik: `CharacterAppearanceApplier` baut einen Platzhalter aus Primitives (nur Fallback). Austauschbar über `bodyModelPrefab` (echtes Modell) und `CharacterPartLibrary` (Create → CrimeSim → Character Part Library: Prefabs pro Slot Hair/Top/Bottom/Shoes). Körperform läuft über `IBodyShapeTarget`, sodass Blendshapes die Skalierung ersetzen.
+
+## Charaktermodelle: MPFB → Blender → Unity
+1. In Blender das Add-on **MPFB** (MakeHuman für Blender) installieren, einen Menschen erzeugen und ein **Rigify**-Rig hinzufügen (Rigify generieren).
+2. Für Körperformen Shape Keys anlegen bzw. aus MPFB-Zielen backen, z. B. `fat`, `muscle`, `build` (Namen frei, aber in Unity gleich eintragen). Modifier vorher anwenden, damit die Shape Keys erhalten bleiben.
+3. Export als **FBX**: Armature + Mesh, „Apply Transform“ / Skalierung 1, „Shape Keys“ aktiv, Deform-Bones only (Rigify: nur `DEF-`-Knochen), keine Leaf Bones.
+4. In Unity unter `Art/Models` ablegen. Import: Rig → **Animation Type: Humanoid**, Avatar prüfen; Model → **Import BlendShapes** an.
+5. Prefab aus dem Modell erstellen, `BlendShapeBodyTarget` hinzufügen und die Zuordnung pflegen (Blendshape-Name → Parameter BodyFat/Muscle/Build/Height/HeadSize, Kurve Wert 0–1 → Gewicht 0–100).
+6. Das Prefab beim `CharacterAppearanceApplier` als `Body Model Prefab` eintragen. Dann werden keine Primitives mehr erzeugt. Hinweis: Höhe wird bereits über die Rig-Skalierung umgesetzt, daher `Height` als Blendshape nur nutzen, wenn `heightScale` 1 bleibt.
+
 ## Spielkonzept
 3D-Open-World-Crime-Sim in Unity 6, eine Mischung aus bekannten Vorbildern plus eigenen, neuen Mechaniken:
 - **GTA:** offene Stadt, Fahrzeuge, Polizei und Fahndungslevel

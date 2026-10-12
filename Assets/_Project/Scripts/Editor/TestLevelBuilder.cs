@@ -86,14 +86,12 @@ namespace CrimeSim.EditorTools
             cc.stepOffset = 0.3f;
             var playerController = playerGo.AddComponent<CrimeSim.PlayerController>();
 
-            var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            body.name = "Body";
-            Object.DestroyImmediate(body.GetComponent<Collider>()); // CharacterController reicht
+            // Körper: Character-Rig aus dem Creator (Primitives als Platzhalter), lädt character.json
+            var body = new GameObject("Body");
             body.transform.SetParent(playerGo.transform, false);
-            body.transform.localPosition = new Vector3(0f, 0.9f, 0f);
-            body.transform.localScale = new Vector3(0.7f, 0.9f, 0.7f);
-            body.GetComponent<Renderer>().sharedMaterial = player;
             if (bodyLayer >= 0) body.layer = bodyLayer;
+            var applier = body.AddComponent<CrimeSim.CharacterAppearanceApplier>();
+            playerGo.AddComponent<CrimeSim.BodyCondition>(); // F1/F2 Fett, F3/F4 Muskeln
 
             var head = new GameObject("HeadAnchor").transform;
             head.SetParent(playerGo.transform, false);
@@ -116,6 +114,10 @@ namespace CrimeSim.EditorTools
             so.FindProperty("playerBodyLayer").stringValue = BodyLayerName;
             so.ApplyModifiedPropertiesWithoutUndo();
 
+            var aso = new SerializedObject(applier);
+            aso.FindProperty("headAnchor").objectReferenceValue = head;
+            aso.ApplyModifiedPropertiesWithoutUndo();
+
             var pso = new SerializedObject(playerController);
             pso.FindProperty("cameraController").objectReferenceValue = camController;
             pso.ApplyModifiedPropertiesWithoutUndo();
@@ -123,7 +125,25 @@ namespace CrimeSim.EditorTools
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
+            AddScenesToBuildSettings();
             Debug.Log("[CrimeSim] Testlevel erstellt: " + ScenePath);
+        }
+
+        internal const string CreatorScenePath = "Assets/_Project/Scenes/CharacterCreator.unity";
+
+        /// <summary>Character Creator (Index 0) und TestLevel in die Build Settings eintragen, sofern vorhanden.</summary>
+        internal static void AddScenesToBuildSettings()
+        {
+            var list = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            string[] wanted = { CreatorScenePath, ScenePath };
+            for (int w = wanted.Length - 1; w >= 0; w--)
+            {
+                string path = wanted[w];
+                if (AssetDatabase.LoadAssetAtPath<SceneAsset>(path) == null) continue;
+                list.RemoveAll(s => s.path == path);
+                list.Insert(0, new EditorBuildSettingsScene(path, true));
+            }
+            EditorBuildSettings.scenes = list.ToArray();
         }
 
         private static GameObject Block(string name, Transform parent, Vector3 pos, Vector3 size, Material mat)
@@ -138,7 +158,7 @@ namespace CrimeSim.EditorTools
             return go;
         }
 
-        private static Material GetMaterial(string name, Color color)
+        internal static Material GetMaterial(string name, Color color)
         {
             if (!AssetDatabase.IsValidFolder(MaterialFolder))
             {
@@ -161,7 +181,7 @@ namespace CrimeSim.EditorTools
         }
 
         /// <summary>Gibt den Layer-Index zurück und legt den Layer bei Bedarf im TagManager an.</summary>
-        private static int EnsureLayer(string layerName)
+        internal static int EnsureLayer(string layerName)
         {
             int existing = LayerMask.NameToLayer(layerName);
             if (existing >= 0) return existing;
