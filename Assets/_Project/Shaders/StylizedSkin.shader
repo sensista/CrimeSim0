@@ -17,13 +17,13 @@ Shader "CrimeSim/StylizedSkin"
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
         _Peach ("Pfirsich-Tönung", Color) = (1.0, 0.94, 0.87, 1)
         _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.95
-        _MidDesaturate ("Mitteltöne entsättigen", Range(0, 1)) = 0.25
+        _MidDesaturate ("Mitteltöne entsättigen", Range(0, 1)) = 0.45
 
         [Header(Gemalte Lichtbaender)]
         _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.5
         _Bands ("Anzahl Lichtbänder", Range(1, 6)) = 3
         _BandSoftness ("Weichheit der Bänder", Range(0.02, 1)) = 0.4
-        _BandBlend ("Bänder sichtbar (bei Malerisch=1)", Range(0, 1)) = 0.8
+        _BandBlend ("Bänder sichtbar (bei Malerisch=1)", Range(0, 1)) = 0.9
         _TerminatorColor ("Terminator (warm, rosig)", Color) = (1.0, 0.64, 0.56, 1)
         _TerminatorWidth ("Terminator-Breite", Range(0.05, 0.6)) = 0.28
         _TerminatorStrength ("Terminator-Stärke", Range(0, 1)) = 0.6
@@ -35,9 +35,9 @@ Shader "CrimeSim/StylizedSkin"
 
         [Header(Pinselstriche Oel)]
         [NoScaleOffset] _BrushMap ("Pinselstriche (kachelbar)", 2D) = "gray" {}
-        _BrushScale ("Pinsel-Kachelung", Range(1, 40)) = 7
-        _BrushColor ("Pinsel auf Farbe", Range(0, 0.5)) = 0.1
-        _BrushLight ("Pinsel auf Lichtgrenze", Range(0, 0.5)) = 0.18
+        _BrushScale ("Pinsel-Kachelung", Range(1, 40)) = 4
+        _BrushColor ("Pinsel auf Farbe", Range(0, 0.5)) = 0.18
+        _BrushLight ("Pinsel auf Lichtgrenze", Range(0, 0.5)) = 0.45
         _BrushNormal ("Pinsel-Relief (Impasto)", Range(0, 1)) = 0.15
 
         [Header(Gemalte Farbvariation)]
@@ -196,7 +196,7 @@ Shader "CrimeSim/StylizedSkin"
                 half lit = PaintedBands(w);
 
                 // Schatten: warm/kühl gemischt (Pinsel entscheidet), Terminator warm-rosig
-                half3 shadowCol = lerp(_ShadowTint.rgb, _ShadowWarm.rgb, lerp(0.5h, gBrush, _Painterly));
+                half3 shadowCol = lerp(_ShadowTint.rgb, _ShadowWarm.rgb, saturate(0.5h + (gBrush - 0.5h) * 3.0h * _Painterly));
                 half3 tone = lerp(shadowCol, 1.0h.xxx, lit);
                 half term = saturate(1.0h - abs(lit - 0.5h) / max(_TerminatorWidth, 0.01h));
                 tone = lerp(tone, tone * _TerminatorColor.rgb * 1.25h, term * _TerminatorStrength);
@@ -230,7 +230,7 @@ Shader "CrimeSim/StylizedSkin"
                 half3 toneRatio = _BaseColor.rgb / max(_ToneReference.rgb, 0.05h);
                 half3 albedo = tex * lerp(1.0h.xxx, toneRatio, _ToneStrength) * _Peach.rgb;
 
-                half3 v = SAMPLE_TEXTURE2D(_VariationMap, sampler_VariationMap, i.uv).rgb * _VariationStrength;
+                half3 v = SAMPLE_TEXTURE2D(_VariationMap, sampler_VariationMap, i.uv).rgb * saturate(_VariationStrength * (0.5h + 1.4h * _Painterly));
                 albedo *= lerp(1.0h.xxx, _RedTint.rgb, v.r);
                 albedo *= lerp(1.0h.xxx, _YellowTint.rgb, v.g);
                 albedo *= lerp(1.0h.xxx, _CoolTint.rgb, v.b);
@@ -273,7 +273,7 @@ Shader "CrimeSim/StylizedSkin"
                 s.albedo = albedo;
 
                 half3 color = CSAccumulateLights(s, i.positionCS);
-                half3 shadowCol = lerp(_ShadowTint.rgb, _ShadowWarm.rgb, lerp(0.5h, gBrush, _Painterly));
+                half3 shadowCol = lerp(_ShadowTint.rgb, _ShadowWarm.rgb, saturate(0.5h + (gBrush - 0.5h) * 3.0h * _Painterly));
                 color += SampleSH(n) * albedo * lerp(shadowCol, 1.0h.xxx, 0.4h) * _AmbientStrength;
                 color = max(color, albedo * shadowCol * _ShadowLift);
 

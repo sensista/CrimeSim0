@@ -5,7 +5,7 @@ OUT=sys.argv[-1]; T="/workspace/CrimeSim0/Assets/_Project/Art/Textures/Character
 bpy.ops.wm.open_mainfile(filepath="/workspace/mpfb_player/out/PlayerBase.blend")
 sc=bpy.context.scene; sc.render.engine='BLENDER_EEVEE_NEXT'
 sc.view_settings.view_transform='AgX'; sc.view_settings.look='AgX - Base Contrast'
-sc.render.resolution_x=520; sc.render.resolution_y=640
+sc.render.resolution_x=820; sc.render.resolution_y=1000
 sc.eevee.use_shadows=True
 body=bpy.data.objects["Body"]
 for o in bpy.data.objects:
@@ -39,9 +39,6 @@ def light(name,typ,col,en,loc,rot,size=1.0):
     l=bpy.data.lights.new(name,typ); l.color=col; l.energy=en
     if typ=='AREA': l.size=size
     o=bpy.data.objects.new(name,l); sc.collection.objects.link(o); o.location=loc; o.rotation_euler=[math.radians(a) for a in rot]; return o
-light("key",'AREA',(1,0.85,0.7),180,(-1.0,-1.2,1.9),(55,0,-40),1.2)
-light("fill",'AREA',(0.6,0.7,1.0),25,(1.2,-0.8,1.6),(70,0,50),1.5)
-light("rim",'AREA',(1,0.8,0.65),60,(0.6,0.9,1.9),(-60,0,150),0.8)
 def img(n,cs='Non-Color'):
     i=bpy.data.images.load(T+n); i.colorspace_settings.name=cs; return i
 I={k:img(v) for k,v in dict(var="skin_variation.png",ao="skin_ao.png",blush="blush_mask.png",thick="skin_thickness.png",brush="skin_brush.png").items()}
@@ -74,18 +71,19 @@ def mat(P,tone):
         return n.outputs[0]
     def sep(c):
         n=N.new('ShaderNodeSeparateColor'); L.new(c,n.inputs[0]); return n.outputs
-    ref=(0.87,0.69,0.55); ratio=tuple(tone[i]/ref[i] for i in range(3))+(1,)
+    ref=(0.87,0.69,0.55); ratio=tuple((tone[i]/ref[i])**2.2 for i in range(3))+(1,)  # Unity: Farben im Linear-Raum
     alb=mix(tex("base"),ratio,1.0,'MULTIPLY'); alb=mix(alb,(1.0,0.94,0.87,1),1.0,'MULTIPLY')
+    VS=min(0.6*(0.5+1.4*P),1.0)
     v=sep(tex("var"))
-    alb=mix(alb,(1.0,0.72,0.68,1),math_('MULTIPLY',v[0],0.6),'MULTIPLY')
-    alb=mix(alb,(1.0,0.95,0.8,1),math_('MULTIPLY',v[1],0.6),'MULTIPLY')
-    alb=mix(alb,(0.86,0.83,0.93,1),math_('MULTIPLY',v[2],0.6),'MULTIPLY')
-    br=sep(tex("brush",7))[0]
-    bc=math_('ADD',math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.2*P),1.0)
+    alb=mix(alb,(1.0,0.72,0.68,1),math_('MULTIPLY',v[0],VS),'MULTIPLY')
+    alb=mix(alb,(1.0,0.95,0.8,1),math_('MULTIPLY',v[1],VS),'MULTIPLY')
+    alb=mix(alb,(0.86,0.83,0.93,1),math_('MULTIPLY',v[2],VS),'MULTIPLY')
+    br=sep(tex("brush",4))[0]
+    bc=math_('ADD',math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.35*P),1.0)
     alb=mix(alb,(1,0.75+0.25,1,1),0,'MIX')
     alb=mix(alb,bc,1.0,'MULTIPLY') if False else mix(alb,(1,1,1,1),0,'MIX')
     # Pinsel auf Farbe (warm): albedo*(1+bc*(1,.75,.55))
-    cc=N.new('ShaderNodeCombineColor'); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.2*P)),cc.inputs[0]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.15*P)),cc.inputs[1]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.11*P)),cc.inputs[2])
+    cc=N.new('ShaderNodeCombineColor'); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.35*P)),cc.inputs[0]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.28*P)),cc.inputs[1]); L.new(math_('ADD',1,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.2*P)),cc.inputs[2])
     alb=mix(alb,cc.outputs[0],1.0,'MULTIPLY')
     alb=mix(alb,(0.95*1.35,0.5*1.35,0.48*1.35,1),math_('MULTIPLY',sep(tex("blush"))[0],0.4),'MULTIPLY') if False else mix(alb,mix(alb,(1.28,0.68,0.65,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("blush"))[0],0.4))
     ao=sep(tex("ao"))[0]
@@ -96,13 +94,13 @@ def mat(P,tone):
     irr=s2r.outputs[0]
     lum=N.new('ShaderNodeRGBToBW'); L.new(irr,lum.inputs[0])
     wv=math_('POWER',math_('MINIMUM',math_('MULTIPLY',lum.outputs[0],0.9),1.0),0.75)  # wrap-ähnlich
-    wv=math_('ADD',wv,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.36*P))
+    wv=math_('ADD',wv,math_('MULTIPLY',math_('SUBTRACT',br,0.5),0.9*P))
     wv=math_('MAXIMUM',math_('MINIMUM',wv,1.0),0.0)
     y=math_('MULTIPLY',wv,3.0); fl=math_('FLOOR',y); fr=math_('FRACT',y)
     mr=N.new('ShaderNodeMapRange'); mr.interpolation_type='SMOOTHSTEP'; L.new(fr,mr.inputs[0]); mr.inputs[1].default_value=0.3; mr.inputs[2].default_value=0.7
     stepped=math_('DIVIDE',math_('ADD',fl,mr.outputs[0]),3.0)
-    lit=math_('ADD',math_('MULTIPLY',wv,1-min(0.8*P,1)),math_('MULTIPLY',stepped,min(0.8*P,1)))
-    shadowcol=mix((0.6,0.52,0.66,1),(0.72,0.48,0.44,1),math_('ADD',0.5,math_('MULTIPLY',math_('SUBTRACT',br,0.5),P)))
+    lit=math_('ADD',math_('MULTIPLY',wv,1-min(0.9*P,1)),math_('MULTIPLY',stepped,min(0.9*P,1)))
+    shadowcol=mix((0.6,0.52,0.66,1),(0.72,0.48,0.44,1),math_('MAXIMUM',math_('MINIMUM',math_('ADD',0.5,math_('MULTIPLY',math_('SUBTRACT',br,0.5),3*P)),1.0),0.0))
     tonec=mix(shadowcol,(1,1,1,1),lit)
     term=math_('MAXIMUM',math_('SUBTRACT',1.0,math_('DIVIDE',math_('ABSOLUTE',math_('SUBTRACT',lit,0.5)),0.28)),0.0)
     tonec=mix(tonec,mix(tonec,(1.25,0.8,0.7,1),1.0,'MULTIPLY'),math_('MULTIPLY',term,0.6))
@@ -116,7 +114,7 @@ def mat(P,tone):
     # Gegenlicht dünne Stellen (vereinfacht: konstanter warmer Zusatz)
     col=mix(col,mix(alb,(1.0,0.4,0.3,1),1.0,'MULTIPLY'),math_('MULTIPLY',sep(tex("thick"))[0],0.15),'ADD')
     # Mitteltöne entsättigen
-    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1-0.25*P*0.6
+    hsv=N.new('ShaderNodeHueSaturation'); L.new(col,hsv.inputs['Color']); hsv.inputs['Saturation'].default_value=1-0.45*P*0.6
     col=hsv.outputs[0]
     # Randlicht
     fr_=N.new('ShaderNodeLayerWeight'); fr_.inputs[0].default_value=0.12
@@ -129,16 +127,19 @@ def mat(P,tone):
     L.new(mxs.outputs[0],out.inputs[0])
     return m
 cam=bpy.data.objects.new("cam",bpy.data.cameras.new("cam")); sc.collection.objects.link(cam); sc.camera=cam
-cam.data.lens=85
+cam.data.lens=135
 top=max(v.co.z for v in body.data.vertices)
+light("key",'AREA',(1,0.82,0.62),160,(-0.9,-1.3,top+0.25),(78,0,-35),0.9)
+light("fill",'AREA',(0.6,0.7,1.0),25,(1.2,-0.8,1.6),(70,0,50),1.5)
+light("rim",'AREA',(1,0.8,0.65),60,(0.6,0.9,1.9),(-60,0,150),0.8)
 def shoot(path,profile):
     if profile: cam.location=(-1.45,-0.02,top-0.17); cam.rotation_euler=(math.radians(90),0,math.radians(-90))
-    else: cam.location=(0,-1.45,top-0.17); cam.rotation_euler=(math.radians(90),0,0)
+    else: cam.location=(0,-1.25,top-0.12); cam.rotation_euler=(math.radians(90),0,0)
     sc.render.filepath=path; bpy.ops.render.render(write_still=True)
-MED=(0.87,0.69,0.55); LIGHT=(0.97,0.82,0.72); DARK=(0.42,0.27,0.18)
-jobs=[(0.0,MED,"p0"),(0.35,MED,"p35"),(0.7,MED,"p70"),(0.35,LIGHT,"light"),(0.35,DARK,"dark")]
+TONES={"vlight":(0.98,0.86,0.78),"medium":(0.8,0.6,0.46),"darkbrown":(0.4,0.25,0.16),"vdark":(0.2,0.12,0.08)}
+MED=(0.87,0.69,0.55)
+jobs=[(0.0,MED,"p0"),(0.35,MED,"p35"),(0.7,MED,"p70"),(1.0,MED,"p100")]+[(0.35,v,k) for k,v in TONES.items()]
 for P,tone,tag in jobs:
     m=mat(P,tone); body.data.materials.clear(); body.data.materials.append(m)
     shoot(f"{OUT}/{tag}_front.png",False)
-    if tag in("p0","p35","p70"): shoot(f"{OUT}/{tag}_side.png",True)
 print("PREVIEW DONE")
