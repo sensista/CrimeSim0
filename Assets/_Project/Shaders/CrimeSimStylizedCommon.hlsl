@@ -51,7 +51,8 @@ half3 CSSoftDiffuse(half NdotL, half wrap, half rampCenter, half rampSoft, half 
     half lit = lerp(w, ramp, rampBlend);
     // Am Terminator (w > 0, lit klein) warm einfärben
     half terminator = saturate(w * (1.0h - lit) * 2.0h);
-    return lit.xxx + sssColor * sssStrength * terminator;
+    // Energie begrenzen: nie heller als volles Licht
+    return min(lit.xxx + sssColor * sssStrength * terminator * (1.0h - lit), 1.0h.xxx);
 }
 
 // Oberflächendaten, die jeder Stil-Shader für CSShadeLight füllt

@@ -140,7 +140,16 @@ namespace CrimeSim.EditorTools
                 mat = new Material(sh) { name = name };
                 AssetDatabase.CreateAsset(mat, p);
             }
-            else if (mat.shader != sh) mat.shader = sh;
+            else
+            {
+                // Bestehendes Material auf die aktuellen Shader-Standardwerte zurücksetzen
+                var fresh = new Material(sh);
+                mat.shader = sh;
+                mat.CopyPropertiesFromMaterial(fresh);
+                mat.shaderKeywords = fresh.shaderKeywords;
+                mat.renderQueue = -1;
+                Object.DestroyImmediate(fresh);
+            }
             return mat;
         }
 
@@ -193,9 +202,9 @@ namespace CrimeSim.EditorTools
 
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.32f, 0.33f, 0.42f);
-            RenderSettings.ambientEquatorColor = new Color(0.26f, 0.22f, 0.24f);
-            RenderSettings.ambientGroundColor = new Color(0.12f, 0.09f, 0.08f);
+            RenderSettings.ambientSkyColor = new Color(0.2f, 0.21f, 0.27f);
+            RenderSettings.ambientEquatorColor = new Color(0.15f, 0.13f, 0.14f);
+            RenderSettings.ambientGroundColor = new Color(0.06f, 0.05f, 0.045f);
             RenderSettings.skybox = null;
 
             // Figur
@@ -205,13 +214,13 @@ namespace CrimeSim.EditorTools
             var driver = fig.GetComponentInChildren<MPFBShapeDriver>();
 
             // Lichter: warmes Hauptlicht, kühles Fülllicht, zwei Randlichter
-            MakeLight("Key Light (warm)", LightType.Directional, new Color(1f, 0.86f, 0.72f), 1.6f,
+            MakeLight("Key Light (warm)", LightType.Directional, new Color(1f, 0.88f, 0.76f), 1.0f,
                 Quaternion.Euler(28f, 145f, 0f), Vector3.zero, LightShadows.Soft);
-            MakeLight("Fill Light (kühl)", LightType.Directional, new Color(0.62f, 0.72f, 1f), 0.35f,
+            MakeLight("Fill Light (kühl)", LightType.Directional, new Color(0.62f, 0.72f, 1f), 0.2f,
                 Quaternion.Euler(12f, 220f, 0f), Vector3.zero, LightShadows.None);
-            MakeLight("Rim Light links", LightType.Spot, new Color(1f, 0.7f, 0.5f), 12f,
+            MakeLight("Rim Light links", LightType.Spot, new Color(1f, 0.75f, 0.55f), 1.2f,
                 Quaternion.identity, new Vector3(-1.2f, 2.1f, -1.4f), LightShadows.None, new Vector3(0f, 1.4f, 0f));
-            MakeLight("Rim Light rechts", LightType.Spot, new Color(0.6f, 0.75f, 1f), 9f,
+            MakeLight("Rim Light rechts", LightType.Spot, new Color(0.6f, 0.75f, 1f), 0.9f,
                 Quaternion.identity, new Vector3(1.3f, 1.9f, -1.3f), LightShadows.None, new Vector3(0f, 1.3f, 0f));
 
             // Hintergrund
@@ -294,7 +303,7 @@ namespace CrimeSim.EditorTools
             go.transform.position = pos;
             go.transform.rotation = rot;
             if (lookAt.HasValue) go.transform.LookAt(lookAt.Value);
-            if (type == LightType.Spot) { l.range = 6f; l.spotAngle = 50f; l.innerSpotAngle = 20f; }
+            if (type == LightType.Spot) { l.range = 4f; l.spotAngle = 35f; l.innerSpotAngle = 15f; }
             return l;
         }
 
@@ -309,21 +318,21 @@ namespace CrimeSim.EditorTools
             }
 
             var bloom = Get<Bloom>(profile);
-            bloom.intensity.Override(0.35f);
-            bloom.threshold.Override(1.0f);
+            bloom.intensity.Override(0.12f);
+            bloom.threshold.Override(1.1f);
             bloom.scatter.Override(0.65f);
 
             var tone = Get<Tonemapping>(profile);
             tone.mode.Override(TonemappingMode.Neutral);
 
             var ca = Get<ColorAdjustments>(profile);
-            ca.postExposure.Override(0.15f);
-            ca.contrast.Override(8f);
-            ca.saturation.Override(6f);
+            ca.postExposure.Override(0f);
+            ca.contrast.Override(5f);
+            ca.saturation.Override(4f);
             ca.colorFilter.Override(new Color(1f, 0.97f, 0.93f));
 
             var vig = Get<Vignette>(profile);
-            vig.intensity.Override(0.28f);
+            vig.intensity.Override(0.22f);
             vig.smoothness.Override(0.45f);
 
             EditorUtility.SetDirty(profile);

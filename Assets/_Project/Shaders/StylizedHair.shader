@@ -19,7 +19,7 @@ Shader "CrimeSim/StylizedHair"
         _SpecExp2 ("Glanz 2 Schärfe", Range(1, 512)) = 16
         _SpecStrength2 ("Glanz 2 Stärke", Range(0, 2)) = 0.2
         _RimColor ("Randlicht-Farbe", Color) = (1, 0.85, 0.7, 1)
-        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.4
+        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.15
         _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 3
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
     }
@@ -119,7 +119,7 @@ Shader "CrimeSim/StylizedHair"
                 half3 color = CSAccumulateLights(s, i.positionCS);
                 color += SampleSH(n) * s.albedo * _AmbientStrength;
                 half rim = pow(1.0h - saturate(dot(n, s.viewDirWS)), _RimPower) * _RimStrength;
-                color += rim * _RimColor.rgb * s.albedo * 2.0h;
+                color += rim * _RimColor.rgb * s.albedo;
                 color = MixFog(color, i.fogFactor);
                 return half4(color, 1.0h);
             }

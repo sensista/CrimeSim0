@@ -9,15 +9,15 @@ Shader "CrimeSim/StylizedEye"
         _IrisColor ("Irisfarbe", Color) = (0.35, 0.22, 0.12, 1)
         _IrisTint ("Iris umfärben", Range(0, 1)) = 0
         _IrisThreshold ("Iris-Erkennung (Helligkeit)", Range(0.2, 0.95)) = 0.7
-        _ScleraBrightness ("Augenweiß Helligkeit", Range(0.5, 1.5)) = 1.05
-        _Wrap ("Wrap", Range(0, 1)) = 0.6
-        _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1.1
+        _ScleraBrightness ("Augenweiß Helligkeit", Range(0.5, 1.5)) = 1.0
+        _Wrap ("Wrap", Range(0, 1)) = 0.3
+        _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 0.7
         _Smoothness ("Glätte", Range(0, 1)) = 0.95
-        _SpecularStrength ("Glanzlicht", Range(0, 3)) = 1.2
+        _SpecularStrength ("Glanzlicht", Range(0, 3)) = 0.6
         _CatchlightDir ("Catchlight-Richtung (Kamera-Raum)", Vector) = (-0.35, 0.45, 1, 0)
         _CatchlightSize ("Catchlight-Größe", Range(0.8, 0.999)) = 0.965
-        _CatchlightStrength ("Catchlight-Stärke", Range(0, 3)) = 1.4
-        _InnerGlow ("Iris-Leuchten (Gegenlicht)", Range(0, 1)) = 0.25
+        _CatchlightStrength ("Catchlight-Stärke", Range(0, 3)) = 0.9
+        _InnerGlow ("Iris-Leuchten (Gegenlicht)", Range(0, 1)) = 0.05
         [HideInInspector] _Cutoff ("Cutoff", Range(0, 1)) = 0.5
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
     }
@@ -89,7 +89,8 @@ Shader "CrimeSim/StylizedEye"
                 half lum = dot(tex.rgb, half3(0.299h, 0.587h, 0.114h));
                 half iris = saturate((_IrisThreshold - lum) * 4.0h);
                 half3 albedo = tex.rgb * _BaseColor.rgb;
-                albedo = lerp(albedo * _ScleraBrightness, albedo, iris);
+                half3 sclera = lerp(albedo, dot(albedo, half3(0.333h, 0.333h, 0.333h)).xxx * half3(1.0h, 0.98h, 0.96h), 0.85h) * _ScleraBrightness;
+                albedo = lerp(sclera, albedo, iris);
                 albedo = lerp(albedo, _IrisColor.rgb * (0.4h + lum * 1.6h), iris * _IrisTint);
                 albedo = saturate(albedo);
 

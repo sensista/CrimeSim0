@@ -19,7 +19,7 @@ Shader "CrimeSim/StylizedSkin"
         _ShadowTint ("Schattenfarbe", Color) = (0.62, 0.42, 0.42, 1)
         _SSSColor ("Durchschein-Farbe (SSS)", Color) = (0.9, 0.35, 0.25, 1)
         _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.35
-        _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
+        _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 0.8
 
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
@@ -28,10 +28,10 @@ Shader "CrimeSim/StylizedSkin"
 
         [Header(Glanz und Randlicht)]
         _Smoothness ("Glätte", Range(0, 1)) = 0.45
-        _SpecularStrength ("Glanzlicht", Range(0, 1)) = 0.12
+        _SpecularStrength ("Glanzlicht", Range(0, 1)) = 0.08
         _RimColor ("Randlicht-Farbe", Color) = (1, 0.82, 0.7, 1)
-        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.35
-        _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 3.5
+        _RimStrength ("Randlicht-Stärke", Range(0, 2)) = 0.12
+        _RimPower ("Randlicht-Breite", Range(0.5, 8)) = 5
 
         [Header(Normal Map)]
         [Toggle(_NORMALMAP)] _UseNormalMap ("Normal Map benutzen", Float) = 0
@@ -153,7 +153,7 @@ Shader "CrimeSim/StylizedSkin"
 
                 half NdotV = saturate(dot(n, s.viewDirWS));
                 half rim = pow(1.0h - NdotV, _RimPower) * _RimStrength;
-                color += rim * _RimColor.rgb * lerp(albedo, 1.0h.xxx, 0.5h);
+                color += rim * _RimColor.rgb * albedo;
 
                 color = MixFog(color, i.fogFactor);
                 return half4(color, 1.0h);
