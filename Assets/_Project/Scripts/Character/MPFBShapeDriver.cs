@@ -34,6 +34,10 @@ namespace CrimeSim
         [Tooltip("Sichtbar bei gender >= 0.5 (männlich).")]
         [SerializeField] private string[] maleOnly = { "Underwear_Briefs" };
         [SerializeField] private Color skinColor = new Color(0.87f, 0.69f, 0.55f);
+        [Tooltip("Optional: Hauttextur für weibliche Figuren (gender < 0.5). Leer = Material-Textur.")]
+        [SerializeField] private Texture femaleSkinTexture;
+        [Tooltip("Optional: Hauttextur für männliche Figuren (gender >= 0.5). Leer = Material-Textur.")]
+        [SerializeField] private Texture maleSkinTexture;
 
         public MPFBManifest Manifest { get; private set; }
         public bool IsReady => Manifest != null;
@@ -72,6 +76,9 @@ namespace CrimeSim
         private MaterialPropertyBlock mpb;
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
+        private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
+        private int lastSkinGender = -1; // -1 unbekannt, 0 weiblich, 1 männlich
 
         // ------------------------------------------------------------ öffentliche API
 
@@ -329,6 +336,11 @@ namespace CrimeSim
             }
 
             bool male = GetValue("gender") >= 0.5f;
+            if (lastSkinGender != (male ? 1 : 0))
+            {
+                lastSkinGender = male ? 1 : 0;
+                ApplySkinColor();
+            }
             foreach (var map in maps)
             {
                 if (map.r == null) continue;
@@ -345,6 +357,13 @@ namespace CrimeSim
             body.GetPropertyBlock(mpb);
             mpb.SetColor(BaseColorId, skinColor);
             mpb.SetColor(ColorId, skinColor);
+            Texture skinTex = GetValue("gender") >= 0.5f ? maleSkinTexture : femaleSkinTexture;
+            if (skinTex != null)
+            {
+                Material m = body.sharedMaterial;
+                if (m != null && m.HasProperty(BaseMapId)) mpb.SetTexture(BaseMapId, skinTex);
+                if (m != null && m.HasProperty(MainTexId)) mpb.SetTexture(MainTexId, skinTex);
+            }
             body.SetPropertyBlock(mpb);
         }
 

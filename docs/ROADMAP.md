@@ -5,7 +5,7 @@
 ## Offene Entscheidungen
 - [ ] Finale Standard-Perspektive (Third oder First Person; Umschaltung bleibt dauerhaft drin)
 - [ ] Setting und Stadt
-- [ ] Grafikstil
+- [x] Grafikstil: halb-realistisch, weich gemalt, leichter Anime-Einschlag; alle Figuren klar erwachsen
 - [ ] Umfang des ersten Prototyps
 
 ## Phase 0: Grundlagen
@@ -29,6 +29,8 @@
 - [x] MPFB-Spielerfigur (neutral, 53-Knochen-Game-Engine-Skelett, 634 Shape Keys, Augen/Brauen/Wimpern/Zähne/Unterwäsche)
 - [x] Creator auf MPFB umgestellt: MPFBShapeDriver, Tabs aus dem Manifest, Suche, Zufall, Vorlagen, Rückgängig, character.json v2
 - [ ] MPFB-Figur in Unity testen (Avatar, Skelett-Anpassung, Materialien) und Ergebnis committen
+- [x] Stil-Shader (CrimeSim/StylizedSkin, StylizedEye, StylizedHair), gemalte Hauttexturen w/m, Stil-Testszene
+- [ ] Stil in Unity prüfen und Shader-Werte feinjustieren
 - [ ] Haare und Kleidung als MPFB-Assets (CC0) mit Shape Keys; CC-BY-Unterhose ersetzen
 - [ ] Optimierung: Creator-Shapes im Spiel in ein Mesh backen (Fett/Muskel bleibt Blendshape), Mesh-Kopien sparen
 - [ ] Gesichtsausdrücke/Visemes (Faceunits-Pack) für Dialoge

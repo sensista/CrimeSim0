@@ -85,3 +85,20 @@ Technik: `CharacterAppearanceApplier` baut einen Platzhalter aus Primitives (nur
 - Grafikstil
 - Umfang des ersten Prototyps
 - Eigene neue Kernmechaniken
+
+## Stil-Look (halb-realistisch, weich gemalt)
+
+Eigene URP-Shader unter `Assets/_Project/Shaders`:
+- **CrimeSim/StylizedSkin**: weiche Wrap-Beleuchtung mit gemalter Schattenstufe, warmer Durchschein-Effekt (Fake-SSS), Rouge, Randlicht, optionale Normal Map. `_BaseColor` ist die Hautfarbe aus dem Creator.
+- **CrimeSim/StylizedEye**: glänzende Augen mit gemaltem Lichtreflex, Iris umfärbbar.
+- **CrimeSim/StylizedHair**: Haarkarten mit Alpha-Clip und Kajiya-Kay-Glanzband (auch für Brauen und Wimpern).
+
+Gemalte Hauttexturen (weiblich/männlich, aus MPFB-CC0-Skins erzeugt) liegen in `Assets/_Project/Art/Textures/Character`. Der MPFBShapeDriver wechselt sie automatisch mit dem Geschlechter-Regler.
+
+So testest du den Look:
+1. Menü **CrimeSim → Stil auf Spielerfigur anwenden**: legt die Materialien unter `Art/Materials/Player/Stylized` an und setzt sie aufs Spieler-Prefab.
+2. Menü **CrimeSim → Stil Testszene erstellen**: erzeugt `Scenes/StilTest.unity` mit Figur, warmem Haupt-, kühlem Füll- und zwei Randlichtern sowie Post-Processing.
+3. Play drücken. Taste **1** = Ganzkörper (Mittelmaus drehen, Rad zoomen), **2** = Gesicht, **3** = Halbtotale. Am Objekt **LookDev** im Inspector Geschlecht, Muskeln, Gewicht und Hautfarbe live verstellen.
+4. Danach **CrimeSim → Character Creator Szene erstellen** erneut ausführen, damit auch der Creator den neuen Look hat.
+
+Werte wie Wrap, Schattengrenze, Rouge oder Randlicht lassen sich direkt am Material `Stil_Haut` einstellen.

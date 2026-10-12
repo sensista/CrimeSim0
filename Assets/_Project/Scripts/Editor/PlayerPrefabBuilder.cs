@@ -71,6 +71,9 @@ namespace CrimeSim.EditorTools
                 Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath));
                 var prefab = PrefabUtility.SaveAsPrefabAsset(inst, PrefabPath);
                 Debug.Log("[CrimeSim] Spieler-Prefab erstellt: " + PrefabPath);
+                // Stil-Look (CrimeSim/Stylized*-Shader) automatisch übernehmen, falls vorhanden
+                if (Shader.Find("CrimeSim/StylizedSkin") != null && StylizedLookBuilder.ApplyToPlayer())
+                    prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
                 return prefab;
             }
             finally
