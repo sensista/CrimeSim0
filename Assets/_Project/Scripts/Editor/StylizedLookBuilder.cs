@@ -23,6 +23,7 @@ namespace CrimeSim.EditorTools
         private const string ScenePath = "Assets/_Project/Scenes/StilTest.unity";
         private const string VolumePath = "Assets/_Project/Settings/LookDev_Volume.asset";
         private const string FemaleSkin = CharTexFolder + "/skin_painted_female.png";
+        private const string BlushMask = CharTexFolder + "/blush_mask.png";
         private const string MaleSkin = CharTexFolder + "/skin_painted_male.png";
         private static readonly Color DefaultSkin = new Color(0.87f, 0.69f, 0.55f);
 
@@ -159,6 +160,9 @@ namespace CrimeSim.EditorTools
             if (tex != null) m.SetTexture("_BaseMap", tex);
             m.SetColor("_BaseColor", DefaultSkin);
             m.SetColor("_ToneReference", DefaultSkin);
+            FixTextureImport(BlushMask, false);
+            var blush = AssetDatabase.LoadAssetAtPath<Texture2D>(BlushMask);
+            if (blush != null) m.SetTexture("_BlushMask", blush);
             EditorUtility.SetDirty(m);
             return m;
         }

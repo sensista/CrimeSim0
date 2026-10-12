@@ -120,6 +120,72 @@ for name,(f,typ) in prox.items():
     err=np.linalg.norm(pw-fitted,axis=1) if len(pw)==len(fitted) else None
     print("PROX",name,len(o.data.vertices),len(fitted),"fiterr_mm",None if err is None else round(float(err.max())*1000,3))
     pobjs[name]=(o,m)
+# --- Körper-Masken pro Kleidungsstück (Body-Hide): Körpervertices unter dem Kleidungsstück
+# Kanal R = Höschen, G = Top, B = Herren-Slip. Der Unity-Shader blendet diese Bereiche aus, wenn das Teil getragen wird.
+import re
+def delete_verts(path):
+    txt=open(path).read().split("delete_verts",1)
+    out=set()
+    if len(txt)<2: return out
+    toks=txt[1].split(); i=0
+    while i<len(toks):
+        if not toks[i].isdigit(): break
+        a=int(toks[i])
+        if i+2<len(toks) and toks[i+1]=="-": out.update(range(a,int(toks[i+2])+1)); i+=3
+        else: out.add(a); i+=1
+    return out
+bmN=bmesh.new(); bmN.from_mesh(h.data); bmN.verts.ensure_lookup_table()
+adj=[[e.other_vert(v).index for e in v.link_edges] for v in bmN.verts]; bmN.free()
+def erode(sel,n):
+    for _ in range(n): sel={i for i in sel if all(j in sel for j in adj[i])}
+    return sel
+MASK_CH={"Underwear_Panties":0,"Underwear_Top":1,"Underwear_Briefs":2}
+body_mask=np.zeros((NB,4),np.float32); body_mask[:,3]=1
+for pn,ch in MASK_CH.items():
+    if pn not in pobjs: continue
+    # Geometrisch: Körpervertex liegt direkt unter der Kleidung (MPFB-Wolgade-Teile binden an Helper-Vertices)
+    from mathutils.bvhtree import BVHTree
+    from mathutils import Vector
+    o=pobjs[pn][0]
+    gbm=bmesh.new(); gbm.from_mesh(o.data); gbm.verts.ensure_lookup_table()
+    edge_f={f.index for f in gbm.faces if any(v.is_boundary for v in f.verts)}; gbm.free()
+    polys=[tuple(pl.vertices) for pl in o.data.polygons]
+    gbm=bmesh.new(); gbm.from_mesh(o.data); gbm.verts.ensure_lookup_table()
+    ev={v.index for v in gbm.verts if v.is_boundary}
+    for _ in range(2): ev|={e.other_vert(gbm.verts[i]).index for i in list(ev) for e in gbm.verts[i].link_edges}
+    edge_f={f.index for f in gbm.faces if any(v.index in ev for v in f.verts)}; gbm.free()
+    SD={n:d for n,d,_ in shapes}
+    h.data.update(); bn=np.empty(NV*3,np.float32); h.data.vertices.foreach_get("normal",bn); bn=bn.reshape(-1,3)
+    # Maske über mehrere Extrem-Körper vereinigen, damit sie bei allen Reglern hält
+    tests=[np.zeros_like(base)]+[SD[k] for k in SD if k.startswith("macro_g") and ("_m0_" in k or "_m1_" in k) and (k.endswith("_w0") or k.endswith("_w1"))]
+    tests+=[SD[k] for k in ("macro_breast_c1_f05","macro_breast_c1_f0") if k in SD]
+    bound=set(); poke=set()
+    for d in tests:
+        bco=base+d
+        tree=BVHTree.FromPolygons([tuple(x) for x in fit(pobjs[pn][1],bco)[0]],polys)
+        for i in range(NB):
+            if i in bound: continue
+            # Abdeckung: Strahl entlang der Körpernormalen (1 cm innen bis 3 cm außen) trifft die Kleidung
+            nv=Vector(bn[i]); o0=Vector(bco[i])-nv*0.01
+            loc,nrm,fi,dist=tree.ray_cast(o0,nv,0.04)
+            if loc is None: continue
+            bound.add(i)
+            if dist < 0.0115 and fi not in edge_f: poke.add(i)  # Körper sticht (fast) durch die Kleidung
+    h.data.update()
+    # 1 Ring Abstand zum Saum (keine Löcher), aber durchstechende Stellen immer ausblenden
+    bound=erode(bound,1)|poke
+    sel=bound|{i for i in delete_verts(prox[pn][0]) if i<NB}
+    for i in sel: body_mask[i,ch]=1
+    print("MASK",pn,len(bound),"->",len(sel))
+# --- Kleidung 3 mm entlang der Normalen nach außen (gegen Z-Fighting/Durchstechen)
+PUSH=0.003
+for pn in MASK_CH:
+    if pn not in pobjs: continue
+    o=pobjs[pn][0]; o.data.update()
+    co=np.empty(len(o.data.vertices)*3,np.float32); o.data.vertices.foreach_get("co",co)
+    nr=np.empty_like(co); o.data.vertices.foreach_get("normal",nr)
+    o.data.vertices.foreach_set("co",co+nr*PUSH)
+
 # body: delete helpers, flatten neutral
 h.shape_key_clear() if False else None
 for k in list(h.data.shape_keys.key_blocks)[::-1]: h.shape_key_remove(k)
@@ -129,6 +195,9 @@ for md in list(h.modifiers):
 bm=bmesh.new(); bm.from_mesh(h.data); bm.verts.ensure_lookup_table()
 bmesh.ops.delete(bm,geom=[v for v in bm.verts if v.index>=NB],context='VERTS'); bm.to_mesh(h.data); bm.free()
 h.name="Body"; h.data.name="Body"
+ca=h.data.color_attributes.new("BodyHideMask",'FLOAT_COLOR','POINT')
+ca.data.foreach_set("color",body_mask.ravel())
+h.data.color_attributes.active_color=ca
 for g in list(h.vertex_groups):
     if g.name not in rig.data.bones: h.vertex_groups.remove(g)
 # shape keys
@@ -160,6 +229,6 @@ for o in list(bpy.data.objects):
     if o.type not in('MESH','ARMATURE') or (o.type=='ARMATURE' and o is not rig): bpy.data.objects.remove(o)
 bpy.ops.wm.save_as_mainfile(filepath=f"{OUT}/PlayerBase.blend")
 bpy.ops.object.select_all(action='SELECT')
-bpy.ops.export_scene.fbx(filepath=f"{OUT}/PlayerBase.fbx",use_selection=True,add_leaf_bones=False,use_armature_deform_only=True,bake_anim=False,apply_scale_options='FBX_SCALE_ALL',axis_forward='-Z',axis_up='Y',mesh_smooth_type='FACE',use_mesh_modifiers=False,path_mode='COPY',embed_textures=False,global_scale=1.0)
+bpy.ops.export_scene.fbx(filepath=f"{OUT}/PlayerBase.fbx",use_selection=True,add_leaf_bones=False,use_armature_deform_only=True,bake_anim=False,apply_scale_options='FBX_SCALE_ALL',axis_forward='-Z',axis_up='Y',mesh_smooth_type='FACE',use_mesh_modifiers=False,path_mode='COPY',embed_textures=False,global_scale=1.0,colors_type='LINEAR')
 json.dump(man,open(f"{OUT}/PlayerBase.shapes.json","w"),ensure_ascii=False,indent=1)
 print("DONE",len(man["shapes"]),man["proxies"],time.time()-t0)

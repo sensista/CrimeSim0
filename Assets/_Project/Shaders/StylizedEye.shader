@@ -13,9 +13,9 @@ Shader "CrimeSim/StylizedEye"
         _Wrap ("Wrap", Range(0, 1)) = 0.3
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 0.7
         _Smoothness ("Glätte", Range(0, 1)) = 0.95
-        _SpecularStrength ("Glanzlicht", Range(0, 3)) = 0.6
+        _SpecularStrength ("Glanzlicht", Range(0, 3)) = 0.9
         _CatchlightDir ("Catchlight-Richtung (Kamera-Raum)", Vector) = (-0.35, 0.45, 1, 0)
-        _CatchlightSize ("Catchlight-Größe", Range(0.8, 0.999)) = 0.965
+        _CatchlightSize ("Catchlight-Größe", Range(0.8, 0.999)) = 0.95
         _CatchlightStrength ("Catchlight-Stärke", Range(0, 3)) = 0.9
         _InnerGlow ("Iris-Leuchten (Gegenlicht)", Range(0, 1)) = 0.05
         [HideInInspector] _Cutoff ("Cutoff", Range(0, 1)) = 0.5

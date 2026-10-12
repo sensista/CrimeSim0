@@ -9,6 +9,7 @@ struct CSAttributes
     float3 normalOS   : NORMAL;
     float4 tangentOS  : TANGENT;
     float2 uv         : TEXCOORD0;
+    float4 color      : COLOR;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -20,6 +21,7 @@ struct CSVaryings
     float3 normalWS   : TEXCOORD2;
     float4 tangentWS  : TEXCOORD3;
     float  fogFactor  : TEXCOORD4;
+    float4 color      : TEXCOORD5;
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
 };
@@ -38,9 +40,22 @@ CSVaryings CSForwardVert(CSAttributes v)
     real sign = v.tangentOS.w * GetOddNegativeScale();
     o.tangentWS = float4(n.tangentWS, sign);
     o.uv = v.uv;
+    o.color = v.color;
     o.fogFactor = ComputeFogFactor(p.positionCS.z);
     return o;
 }
+
+// Körper unter getragener Kleidung ausblenden (Body-Hide-Maske in den Vertexfarben, siehe build_player.py).
+// Alpha 0 = Maske vorhanden; Meshes ohne Vertexfarben liefern Weiß und werden nie ausgeblendet.
+#if defined(CS_BODY_HIDE)
+void CSBodyHideClip(float4 vcolor)
+{
+    half hide = vcolor.a < 0.5 ? dot(saturate(vcolor.rgb), saturate(_HideMask.rgb)) : 0.0;
+    clip(0.5 - hide);
+}
+#else
+void CSBodyHideClip(float4 vcolor) {}
+#endif
 
 // Weiche, "gemalte" Lichtantwort: Wrap-Diffuse + weiche Stufe + warmer Übergang (Fake-SSS)
 // wrap 0..1, rampCenter/rampSoft steuern die Schattengrenze, rampBlend 0 = rein weich, 1 = Stufe

@@ -78,7 +78,17 @@ namespace CrimeSim
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
-        private int lastSkinGender = -1; // -1 unbekannt, 0 weiblich, 1 männlich
+        private int lastSkinGender = -1;
+        private static readonly int HideMaskId = Shader.PropertyToID("_HideMask");
+        private Vector4 extraHide = Vector4.zero;
+
+        /// <summary>Kleidungssystem: Körperbereich (Kanal 0..3 der Body-Hide-Maske) zusätzlich ausblenden.</summary>
+        public void SetBodyHide(int channel, bool hidden)
+        {
+            if (channel < 0 || channel > 2) return;
+            extraHide[channel] = hidden ? 1f : 0f;
+            ApplySkinColor();
+        } // -1 unbekannt, 0 weiblich, 1 männlich
 
         // ------------------------------------------------------------ öffentliche API
 
@@ -89,6 +99,12 @@ namespace CrimeSim
                 case "african": case "asian": case "caucasian": return 1f / 3f;
                 case "gender": case "age": case "muscle": case "weight": case "height":
                 case "proportions": case "cupsize": case "firmness": return 0.5f;
+                // Stil-Standard: etwas größere Augen, vollere, geschlossene Lippen
+                case "l-eye-scale-decr-incr": case "r-eye-scale-decr-incr": return 0.3f;
+                case "mouth-upperlip-volume-decr-incr": return 0.25f;
+                case "mouth-lowerlip-volume-decr-incr": return 0.3f;
+                case "mouth-upperlip-middle-down-up": return -0.3f;
+                case "mouth-lowerlip-middle-down-up": return 0.25f;
                 default: return 0f;
             }
         }
@@ -364,6 +380,10 @@ namespace CrimeSim
                 if (m != null && m.HasProperty(BaseMapId)) mpb.SetTexture(BaseMapId, skinTex);
                 if (m != null && m.HasProperty(MainTexId)) mpb.SetTexture(MainTexId, skinTex);
             }
+            // Unterwäsche: Körper darunter ausblenden (R Höschen, G Top, B Slip)
+            Vector4 hide = GetValue("gender") >= 0.5f ? new Vector4(0f, 0f, 1f, 0f) : new Vector4(1f, 1f, 0f, 0f);
+            hide = Vector4.Max(hide, extraHide);
+            mpb.SetVector(HideMaskId, hide);
             body.SetPropertyBlock(mpb);
         }
 

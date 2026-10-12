@@ -12,6 +12,7 @@ struct CSDepthAttributes
     float4 positionOS : POSITION;
     float3 normalOS   : NORMAL;
     float2 uv         : TEXCOORD0;
+    float4 color      : COLOR;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -20,6 +21,7 @@ struct CSDepthVaryings
     float4 positionCS : SV_POSITION;
     float2 uv         : TEXCOORD0;
     float3 normalWS   : TEXCOORD1;
+    float4 color      : TEXCOORD2;
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
 };
@@ -27,8 +29,12 @@ struct CSDepthVaryings
 float3 _LightDirection;
 float3 _LightPosition;
 
-void CSClip(float2 uv)
+void CSClip(float2 uv, float4 vcolor)
 {
+#if defined(CS_BODY_HIDE)
+    half hide = vcolor.a < 0.5 ? dot(saturate(vcolor.rgb), saturate(_HideMask.rgb)) : 0.0;
+    clip(0.5 - hide);
+#endif
 #if defined(_ALPHATEST_ON)
     clip(CSAlpha(uv) - _Cutoff);
 #endif
@@ -53,13 +59,14 @@ CSDepthVaryings CSShadowVert(CSDepthAttributes v)
 #endif
     o.positionCS = positionCS;
     o.uv = v.uv;
+    o.color = v.color;
     o.normalWS = normalWS;
     return o;
 }
 
 half4 CSShadowFrag(CSDepthVaryings i) : SV_Target
 {
-    CSClip(i.uv);
+    CSClip(i.uv, i.color);
     return 0;
 }
 
@@ -70,6 +77,7 @@ CSDepthVaryings CSDepthVert(CSDepthAttributes v)
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
     o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
     o.uv = v.uv;
+    o.color = v.color;
     o.normalWS = TransformObjectToWorldNormal(v.normalOS);
     return o;
 }
@@ -77,14 +85,14 @@ CSDepthVaryings CSDepthVert(CSDepthAttributes v)
 half CSDepthFrag(CSDepthVaryings i) : SV_Target
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-    CSClip(i.uv);
+    CSClip(i.uv, i.color);
     return i.positionCS.z;
 }
 
 half4 CSDepthNormalsFrag(CSDepthVaryings i, bool isFrontFace : SV_IsFrontFace) : SV_Target
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-    CSClip(i.uv);
+    CSClip(i.uv, i.color);
     float3 n = normalize(i.normalWS);
     n = isFrontFace ? n : -n;
 #if defined(_GBUFFER_NORMALS_OCT)

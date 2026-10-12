@@ -12,22 +12,22 @@ Shader "CrimeSim/StylizedSkin"
         _ToneStrength ("Stärke Hautfarbe", Range(0, 1)) = 1
 
         [Header(Weiche Beleuchtung)]
-        _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.45
+        _Wrap ("Wrap (Licht um die Form)", Range(0, 1)) = 0.6
         _RampCenter ("Schattengrenze", Range(0, 1)) = 0.42
         _RampSoftness ("Weichheit Schattengrenze", Range(0.01, 0.5)) = 0.22
         _RampBlend ("Gemalte Stufe (0 weich, 1 hart)", Range(0, 1)) = 0.3
         _ShadowTint ("Schattenfarbe", Color) = (0.6, 0.48, 0.5, 1)
         _SSSColor ("Durchschein-Farbe (SSS)", Color) = (0.9, 0.35, 0.25, 1)
-        _ShadowStrength ("Schattenstärke (Eigenschatten)", Range(0, 1)) = 0.7
+        _ShadowStrength ("Schattenstärke (Eigenschatten)", Range(0, 1)) = 0.45
         _SSSStrength ("Durchschein-Stärke", Range(0, 1)) = 0.2
-        _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.85
+        _Saturation ("Hautsättigung", Range(0, 1.5)) = 0.78
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
-        _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.06
+        _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.1
 
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
         _BlushColor ("Rouge-Farbe", Color) = (0.88, 0.45, 0.42, 1)
-        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0
+        _BlushStrength ("Rouge-Stärke", Range(0, 1)) = 0.35
 
         [Header(Glanz und Randlicht)]
         _Smoothness ("Glätte", Range(0, 1)) = 0.45
@@ -41,6 +41,9 @@ Shader "CrimeSim/StylizedSkin"
         [Normal][NoScaleOffset] _BumpMap ("Normal Map", 2D) = "bump" {}
         _BumpScale ("Normal-Stärke", Range(0, 2)) = 0.5
 
+        [Header(Kleidung)]
+        _HideMask ("Körper ausblenden (R Höschen, G Top, B Slip)", Vector) = (0, 0, 0, 0)
+        _ShadowLiftFace ("(reserviert)", Float) = 0
         [HideInInspector] _Cutoff ("Cutoff", Range(0, 1)) = 0.5
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
     }
@@ -51,6 +54,7 @@ Shader "CrimeSim/StylizedSkin"
         LOD 300
 
         HLSLINCLUDE
+        #define CS_BODY_HIDE 1
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
         CBUFFER_START(UnityPerMaterial)
@@ -78,6 +82,8 @@ Shader "CrimeSim/StylizedSkin"
             half _RimPower;
             half _BumpScale;
             half _Cutoff;
+            float4 _HideMask;
+            half _ShadowLiftFace;
         CBUFFER_END
 
         TEXTURE2D(_BaseMap);   SAMPLER(sampler_BaseMap);
@@ -132,6 +138,7 @@ Shader "CrimeSim/StylizedSkin"
             half4 Frag(CSVaryings i, bool isFrontFace : SV_IsFrontFace) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(i);
+                CSBodyHideClip(i.color);
                 float2 uv = i.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
                 half4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
 

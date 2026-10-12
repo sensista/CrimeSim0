@@ -91,8 +91,8 @@ namespace CrimeSim.EditorTools
                 case "Eyebrows": return GetMat("PlayerEyebrows", "eyebrow001.png", Color.white, true, 0.1f);
                 case "Eyelashes": return GetMat("PlayerEyelashes", "eyelashes01.png", Color.white, true, 0.1f);
                 case "Teeth": return GetMat("PlayerTeeth", "teeth.png", Color.white, false, 0.6f);
-                case "Underwear_Panties": return GetMat("PlayerUnderwearPanties", "f_panties_01_diffuse.png", Color.white, true, 0.3f);
-                case "Underwear_Top": return GetMat("PlayerUnderwearTop", "f_top_01_diffuse.png", Color.white, true, 0.3f);
+                case "Underwear_Panties": return GetMat("PlayerUnderwearPanties", "f_panties_01_diffuse.png", Color.white, false, 0.3f);
+                case "Underwear_Top": return GetMat("PlayerUnderwearTop", "f_top_01_diffuse.png", Color.white, false, 0.3f);
                 case "Underwear_Briefs": return GetMat("PlayerUnderwearBriefs", "sport_briefs01.png", Color.white, false, 0.3f);
                 default: return GetMat("PlayerDefault", null, new Color(0.6f, 0.6f, 0.6f), false, 0.3f);
             }
@@ -130,6 +130,12 @@ namespace CrimeSim.EditorTools
                 if (mat.HasProperty("_Cull")) mat.SetFloat("_Cull", 0f); // beidseitig
                 mat.EnableKeyword("_ALPHATEST_ON");
                 mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+            }
+            else
+            {
+                if (mat.HasProperty("_AlphaClip")) mat.SetFloat("_AlphaClip", 0f);
+                mat.DisableKeyword("_ALPHATEST_ON");
+                mat.renderQueue = -1;
             }
             EditorUtility.SetDirty(mat);
             return mat;
