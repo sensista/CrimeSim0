@@ -103,8 +103,6 @@ namespace CrimeSim
                 case "l-eye-scale-decr-incr": case "r-eye-scale-decr-incr": return 0.3f;
                 case "mouth-upperlip-volume-decr-incr": return 0.25f;
                 case "mouth-lowerlip-volume-decr-incr": return 0.3f;
-                case "mouth-upperlip-middle-down-up": return -0.3f;
-                case "mouth-lowerlip-middle-down-up": return 0.25f;
                 default: return 0f;
             }
         }

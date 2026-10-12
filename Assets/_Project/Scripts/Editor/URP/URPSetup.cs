@@ -55,7 +55,7 @@ namespace CrimeSim.EditorTools
             void SetBool(string n, bool v) { var p = pso.FindProperty(n); if (p != null) p.boolValue = v; }
             void SetFloat(string n, float v) { var p = pso.FindProperty(n); if (p != null) p.floatValue = v; }
             SetInt("m_MainLightShadowmapResolution", 4096);
-            SetInt("m_AdditionalLightsShadowmapResolution", 2048);
+            SetInt("m_AdditionalLightsShadowmapResolution", 4096);
             SetBool("m_AdditionalLightShadowsSupported", true);
             SetFloat("m_ShadowDistance", 30f);
             SetInt("m_ShadowCascadeCount", 4);

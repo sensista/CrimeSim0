@@ -16,22 +16,8 @@ namespace CrimeSim.EditorTools
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-            Material floor = TestLevelBuilder.GetMaterial("CC_Floor", new Color(0.18f, 0.18f, 0.2f));
-            Material pedestalMat = TestLevelBuilder.GetMaterial("CC_Pedestal", new Color(0.5f, 0.5f, 0.55f));
-
-            var lightGo = new GameObject("Directional Light");
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Directional;
-            light.intensity = 1.1f;
-            light.shadows = LightShadows.Soft;
-            lightGo.transform.rotation = Quaternion.Euler(35f, 150f, 0f);
-
-            var fillGo = new GameObject("Fill Light");
-            var fill = fillGo.AddComponent<Light>();
-            fill.type = LightType.Point;
-            fill.range = 8f;
-            fill.intensity = 1.5f;
-            fillGo.transform.position = new Vector3(-1.5f, 2f, 2.5f);
+            Material floor = TestLevelBuilder.GetMaterial("CC_Floor", new Color(0.07f, 0.065f, 0.07f));
+            Material pedestalMat = TestLevelBuilder.GetMaterial("CC_Pedestal", new Color(0.16f, 0.15f, 0.16f));
 
             var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Floor";
@@ -63,6 +49,8 @@ namespace CrimeSim.EditorTools
             camData.antialiasing = UnityEngine.Rendering.Universal.AntialiasingMode.SubpixelMorphologicalAntiAliasing;
             camData.antialiasingQuality = UnityEngine.Rendering.Universal.AntialiasingQuality.High;
             camData.renderPostProcessing = true;
+            // Licht-Stimmungen wie in der Stil-Testszene (Standard: Abend)
+            StylizedLookBuilder.BuildLightRigs(cam, 1);
             camGo.transform.position = new Vector3(0f, 1f, 3.5f);
             camGo.transform.rotation = Quaternion.Euler(5f, 180f, 0f);
             var orbit = camGo.AddComponent<CrimeSim.CreatorOrbitCamera>();

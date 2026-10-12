@@ -593,6 +593,18 @@ namespace CrimeSim
             undoLabel = ub.GetComponentInChildren<Text>();
             MakeButton(tools, "Ansicht", () => { if (orbitCamera != null) orbitCamera.ResetView(); });
 
+            // Licht-Stimmung (Tag / Abend / Nacht)
+            var lighting = FindFirstObjectByType<LightingPresets>();
+            if (lighting != null && lighting.Count > 0)
+            {
+                var lrow = Row(34f, root);
+                for (int i = 0; i < lighting.Count; i++)
+                {
+                    int idx = i;
+                    MakeButton(lrow, lighting.NameOf(i), () => lighting.Set(idx));
+                }
+            }
+
             // Scrollbereich
             var scrollGo = new GameObject("Scroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
             scrollGo.transform.SetParent(root, false);

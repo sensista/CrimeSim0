@@ -24,6 +24,11 @@ Shader "CrimeSim/StylizedSkin"
         _AmbientStrength ("Umgebungslicht", Range(0, 2)) = 1
         _ShadowLift ("Schatten aufhellen (nie schwarz)", Range(0, 0.3)) = 0.1
 
+        [Header(Gemalte Tiefe AO)]
+        [NoScaleOffset] _AOMap ("AO-Map (gebacken)", 2D) = "white" {}
+        _AOStrength ("AO-Stärke", Range(0, 1)) = 0.55
+        _AOColor ("AO-Farbe (warm)", Color) = (0.62, 0.36, 0.32, 1)
+
         [Header(Rouge)]
         [NoScaleOffset] _BlushMask ("Rouge-Maske (R)", 2D) = "black" {}
         _BlushColor ("Rouge-Farbe", Color) = (0.88, 0.45, 0.42, 1)
@@ -84,11 +89,14 @@ Shader "CrimeSim/StylizedSkin"
             half _Cutoff;
             float4 _HideMask;
             half _ShadowLiftFace;
+            half _AOStrength;
+            half4 _AOColor;
         CBUFFER_END
 
         TEXTURE2D(_BaseMap);   SAMPLER(sampler_BaseMap);
         TEXTURE2D(_BlushMask); SAMPLER(sampler_BlushMask);
         TEXTURE2D(_BumpMap);   SAMPLER(sampler_BumpMap);
+        TEXTURE2D(_AOMap);     SAMPLER(sampler_AOMap);
 
         half CSAlpha(float2 uv) { return SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv * _BaseMap_ST.xy + _BaseMap_ST.zw).a * _BaseColor.a; }
         ENDHLSL
@@ -146,6 +154,9 @@ Shader "CrimeSim/StylizedSkin"
                 half3 albedo = tex.rgb * lerp(1.0h.xxx, toneRatio, _ToneStrength);
                 half blush = SAMPLE_TEXTURE2D(_BlushMask, sampler_BlushMask, i.uv).r * _BlushStrength;
                 albedo = lerp(albedo, albedo * _BlushColor.rgb * 1.4h, blush);
+                // Gemalte Tiefe: warme, weiche Verdunkelung in Falten (Hals, Schlüsselbein, Augenhöhlen, Nasolabial)
+                half ao = SAMPLE_TEXTURE2D(_AOMap, sampler_AOMap, i.uv).r;
+                albedo *= lerp(1.0h.xxx, lerp(_AOColor.rgb, 1.0h.xxx, ao), _AOStrength);
                 albedo = saturate(lerp(dot(albedo, half3(0.3h, 0.59h, 0.11h)).xxx, albedo, _Saturation));
 
                 half3 n = normalize(i.normalWS);

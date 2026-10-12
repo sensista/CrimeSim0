@@ -204,10 +204,55 @@ for g in list(h.vertex_groups):
 man={"version":1,"basis":"MPFB2 neutral (alle Makros 0.5, Rassen je 1/3), Alter 25","units":"Meter, Blender-Koordinaten (X rechts, Y vorne=-Y, Z oben); Unity: (x,y,z)_unity = (-x, z, -y)","shapes":[],"boneHeadsNeutral":bh,"heightJointOffsets":{k:joints(v) for k,v in heights.items()},"heightTotal_m":{k:float((base+v)[:NB,2].max()) for k,v in heights.items()},"neutralHeight_m":float(base[:NB,2].max()),"proxies":{}}
 h.shape_key_add(name="Basis")
 for o,_ in pobjs.values(): o.shape_key_add(name="Basis")
+# --- Mund schließen (MakeHuman-Basis hat einen offenen Lippenspalt): Innenkanten der Ober- und
+# Unterlippe auf eine gemeinsame Mittellinie ziehen, 1. Nachbarring 50 %. Nur Körper-Basis, Shapes bleiben Deltas.
+def lip_loop(start, zmin, zmax):
+    bmL=bmesh.new(); bmL.from_mesh(h.data); bmL.verts.ensure_lookup_table()
+    co=base; out={start}
+    for sgn in (-1,1):
+        cur=start
+        for _ in range(12):
+            nb=[e.other_vert(bmL.verts[cur]).index for e in bmL.verts[cur].link_edges]
+            cand=[j for j in nb if j not in out and abs(co[j,0])<0.027 and sgn*co[j,0]>sgn*co[cur,0] and zmin<=co[j,2]<=zmax and abs(co[j,1]-co[cur,1])<0.006]
+            if not cand: break
+            cur=min(cand,key=lambda j:abs(co[j,2]-co[cur,2])); out.add(cur)
+    adj={i:[e.other_vert(bmL.verts[i]).index for e in bmL.verts[i].link_edges] for i in out}
+    bmL.free(); return sorted(out), adj
+LIP_U,LIP_L=474,523  # Innenkante Ober-/Unterlippe in der Mitte (MPFB-Basemesh)
+zU=base[LIP_U,2]; zL=base[LIP_L,2]
+up,adjU=lip_loop(LIP_U, zU-0.002, zU+0.006)
+lo,adjL=lip_loop(LIP_L, zL-0.006, zL+0.002)
+body_base=base.copy()
+moves={}
+for i in up:
+    j=min(lo,key=lambda k:abs(base[k,0]-base[i,0]))
+    if abs(base[j,0]-base[i,0])>0.004: continue
+    mid=(base[i]+base[j])*0.5
+    # Kontaktpunkt nach vorne holen: knapp hinter die Lippenvorderseite an dieser x-Position
+    col=np.where((abs(base[:NB,0]-base[i,0])<0.0015)&(abs(base[:NB,2]-mid[2])<0.008))[0]
+    front=base[col,1].min() if len(col) else mid[1]
+    mid[1]=min(mid[1], front+0.006)
+    for v,sgn in ((i,1),(j,-1)):
+        t=mid.copy(); t[2]+=sgn*0.0002
+        moves[v]=t-base[v]
+for v,dv in list(moves.items()):
+    body_base[v]+=dv
+for adj in (adjU,adjL):
+    pass
+bmA=bmesh.new(); bmA.from_mesh(h.data); bmA.verts.ensure_lookup_table()
+for v,dv in moves.items():
+    for e in bmA.verts[v].link_edges:
+        n=e.other_vert(bmA.verts[v]).index
+        if n not in moves and n<NB: body_base[n]+=0.5*dv
+bmA.free()
+print("LIPS closed", len(up), len(lo), len(moves)); print("LIPSU",[(i,np.round(base[i]*1000,1).tolist()) for i in up]); print("LIPSL",[(i,np.round(base[i]*1000,1).tolist()) for i in lo])
 B=base.astype(np.float32)
+BB=body_base.astype(np.float32)
+h.data.vertices.foreach_set("co",BB[:NB].ravel())
+h.data.shape_keys.key_blocks["Basis"].data.foreach_set("co",BB[:NB].ravel())
 pfit={n:fit(m,base)[0] for n,(o,m) in pobjs.items()}
 for n,d,meta in shapes:
-    k=h.shape_key_add(name=n); k.data.foreach_set("co",(B[:NB]+d[:NB]).astype(np.float32).ravel())
+    k=h.shape_key_add(name=n); k.data.foreach_set("co",(BB[:NB]+d[:NB]).astype(np.float32).ravel())
     on=[]
     for pn,(o,m) in pobjs.items():
         if len(o.data.vertices)!=len(pfit[pn]): continue
