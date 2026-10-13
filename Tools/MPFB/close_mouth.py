@@ -7,6 +7,11 @@ bpy.ops.wm.open_mainfile(filepath=f"{OUT}/PlayerBase.blend")
 body=bpy.data.objects["Body"]; me=body.data; n=len(me.vertices); kb=me.shape_keys.key_blocks
 def get(k): a=np.zeros(n*3,np.float32); k.data.foreach_get("co",a); return a.reshape(-1,3).astype(float)
 base=get(kb[0])
+from mathutils import kdtree
+kd=kdtree.KDTree(n)
+for i,c in enumerate(base): kd.insert(c,i)
+kd.balance()
+MIR=[kd.find((-c[0],c[1],c[2]))[1] for c in base]
 bm=bmesh.new(); bm.from_mesh(me); bm.verts.ensure_lookup_table()
 nbr=lambda i:[e.other_vert(bm.verts[i]).index for e in bm.verts[i].link_edges]
 def loop(start,zmin,zmax):
@@ -46,7 +51,7 @@ for k in kb:
     for i,j in pairs:
         ax=abs(C0[i,0]); t=min(max((ax-0.014)/(0.024-0.014),0),1); fade=1-t*t*(3-2*t)
         for v,sgn in ((i,1),(j,-1)):
-            mv[v]=(mv[v]+np.array([0,0.0003,sgn*0.000125]))*fade
+            mv[v]=(mv[v]+np.array([0,0.0009,-sgn*0.00006]))*fade
     C=C0
     ring=np.zeros_like(C); cnt=np.zeros(n)
     for v in paired:
@@ -54,6 +59,34 @@ for k in kb:
             if w not in paired: ring[w]+=mv[v]*0.5; cnt[w]+=1
     ring[cnt>0]/=cnt[cnt>0,None]
     C=C+mv+ring
+    k.data.foreach_set("co",C.astype(np.float32).ravel())
+
+# --- Mundwinkel-Naht (v7.4): Die Kommissur ist in MPFB-Basis offen (verknotete Innenlippen-Geometrie
+# zwischen |x|~14.5 und ~24 mm). Ursache der dunklen Zacken in Unity: man sieht durch die Öffnung
+# Innenlippen-Rückseiten und Zähne. Lösung: Ober- und Unterlippenkante im Winkel in JEDEM Key auf die
+# Naht-Mittellinie verschweißen (nur Winkel, Mitte bleibt getrennt -> Mund kann später öffnen).
+corner=[]
+for v in range(n):
+    x,y,z=base[v]
+    if 0.0060<abs(x)<0.0250 and -0.1446<y<-0.1362: corner.append(v)
+def zmid(C,x):
+    sgn=1 if x>0 else -1
+    a=C[[474,523],2].mean(); i0=469 if sgn<0 else MIR[469]; j0=519 if sgn<0 else MIR[519]; c=3737 if sgn<0 else MIR[3737]
+    z0=(C[i0,2]+C[j0,2])/2; x0=abs(C[i0,0]); x1=abs(C[c,0])
+    if abs(x)<x0: return a+(z0-a)*abs(x)/x0
+    t=min(max((abs(x)-x0)/(x1-x0),0),1)
+    return z0+(C[c,2]-z0)*t
+for k in kb:
+    C=get(k)
+    for v in corner:
+        x=base[v,0]; zm=zmid(C,C[v,0]); d=abs(base[v,2]-zmid(base,x))
+        if d>0.0016: continue
+        w=1-min(max((d-0.0011)/0.0005,0),1)
+        tin=min(max((abs(x)-0.0060)/0.0025,0),1)   # sanft aus der Mitte einblenden
+        w*=tin
+        C[v,2]=C[v,2]+(zm-np.sign(base[v,2]-zmid(base,x))*0.00006-C[v,2])*w
+        # Oberlippenkante minimal VOR die Unterlippe (wie echte Lippen): auch von schräg oben/unten kein Spalt
+        C[v,1]-=np.sign(base[v,2]-zmid(base,x))*0.0003*w
     k.data.foreach_set("co",C.astype(np.float32).ravel())
 me.vertices.foreach_set("co",get(kb[0]).astype(np.float32).ravel()); me.update()
 # Prüfen
