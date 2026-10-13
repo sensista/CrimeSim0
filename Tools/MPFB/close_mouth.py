@@ -27,6 +27,9 @@ for i in up:
 for j in lo:
     i=min(up,key=lambda k:abs(base[k,0]-base[j,0]))
     if abs(base[j,0]-base[i,0])<0.004 and (i,j) not in pairs: pairs.append((i,j))
+# Nur echte Gegenüber-Paare (Lippenspalt ~1-3 mm). Weiter entfernte "Paare" an den Winkeln wurden früher
+# zusammengezogen und haben dort Geometrie verknotet (dunkle Stacheln in Unity).
+pairs=[(i,j) for i,j in pairs if np.linalg.norm(base[i]-base[j])<0.0035]
 print("PAIRS",len(pairs))
 paired={v for p in pairs for v in p}
 for k in kb:
@@ -36,7 +39,15 @@ for k in kb:
         for i,j in pairs:
             m=(C[i]+C[j])/2; acc[i]+=m; acc[j]+=m; c[i]+=1; c[j]+=1
         idx=c>0; C[idx]=acc[idx]/c[idx,None]
-    mv=C-C0; C=C0
+    mv=C-C0
+    # Nicht kollabieren: Ober-/Unterkante bleiben 0.25 mm getrennt und liegen leicht nach innen versetzt,
+    # sonst entstehen Null-Flächen -> kaputte Normalen (dunkle "Stacheln" an den Mundwinkeln in Unity).
+    # Zu den Mundwinkeln hin weich ausblenden (die Winkel sind in der Basis schon geschlossen).
+    for i,j in pairs:
+        ax=abs(C0[i,0]); t=min(max((ax-0.014)/(0.024-0.014),0),1); fade=1-t*t*(3-2*t)
+        for v,sgn in ((i,1),(j,-1)):
+            mv[v]=(mv[v]+np.array([0,0.0003,sgn*0.000125]))*fade
+    C=C0
     ring=np.zeros_like(C); cnt=np.zeros(n)
     for v in paired:
         for w in nbr(v):

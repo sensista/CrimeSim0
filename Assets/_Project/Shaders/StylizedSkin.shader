@@ -177,7 +177,6 @@ Shader "CrimeSim/StylizedSkin"
                 half NdotL = dot(s.normalWS, light.direction);
                 half sh = lerp(1.0h, light.shadowAttenuation, _ShadowStrength);
                 sh = lerp(sh, 1.0h, saturate(1.0h - abs(NdotL) * 3.0h) * 0.25h); // nur Schatten-Akne am Terminator dämpfen
-                sh = lerp(sh, 1.0h, saturate(gLip * 1.5h) * 0.85h); // Lippenspalt: keine gezackte Eigenschatten-Linie (Shadowmap-Akne in der Falte)
                 half w = saturate((NdotL + _Wrap) / (1.0h + _Wrap)) * sh;
                 half lit = SmoothRamp(w);
 
