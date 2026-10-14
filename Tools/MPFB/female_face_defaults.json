@@ -40,5 +40,6 @@
  "head-scale-horiz-decr-incr": -0.08,
  "head-invertedtriangular": 0.25,
  "head-fat-decr-incr": -0.2,
- "head-age-decr-incr": -0.15
+ "head-age-decr-incr": -0.15,
+ "cs-female-face": 1.0
 }

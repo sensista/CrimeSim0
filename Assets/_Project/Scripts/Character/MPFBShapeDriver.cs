@@ -169,6 +169,8 @@ namespace CrimeSim
                 case "head-invertedtriangular": return 0.25f;
                 case "head-fat-decr-incr": return -0.2f;
                 case "head-age-decr-incr": return -0.15f;
+                // lookdev-v8: gesculptetes weibliches Standardgesicht (Referenz), nur Frauen
+                case "cs-female-face": return 1f;
                 default: return 0f;
             }
         }

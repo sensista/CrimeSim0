@@ -238,7 +238,7 @@ namespace CrimeSim
                 driver.SetValue("firmness", F(0.3f, 0.7f));
                 foreach (var sl in driver.Manifest.sliders)
                 {
-                    if (sl.group == "asym") continue;
+                    if (sl.group == "asym" || sl.group == "cs") continue;
                     if (sl.Bipolar)
                     {
                         if (r.NextDouble() < 0.35) driver.SetValue(sl.id, Mathf.Clamp(Gauss() * 0.25f, -0.5f, 0.5f));
@@ -491,6 +491,7 @@ namespace CrimeSim
             string q = text.ToLowerInvariant();
             foreach (var sl in driver.Manifest.sliders)
             {
+                if (sl.group == "cs") continue; // internes Basis-Gesicht, kein Regler
                 string hay = (sl.category + " " + sl.label + " " + sl.id).ToLowerInvariant();
                 if (!hay.Contains(q)) continue;
                 ModifierRow(c, sl, ref refresh, true);

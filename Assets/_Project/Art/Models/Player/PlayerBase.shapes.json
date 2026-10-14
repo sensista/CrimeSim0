@@ -25728,6 +25728,22 @@
     ]
    },
    "maxDisplacement_cm": 5.0
+  },
+  {
+   "name": "cs_female_face",
+   "type": "modifier",
+   "category": "Kopf",
+   "group": "cs",
+   "slider": "cs-female-face",
+   "direction": "positive",
+   "displayName": "Weibliches Standardgesicht (lookdev-v8)",
+   "proxies": [
+    "Eyes",
+    "Eyebrows",
+    "Eyelashes",
+    "Teeth"
+   ],
+   "maxDisplacement_cm": 0.668
   }
  ],
  "boneHeadsNeutral": {
